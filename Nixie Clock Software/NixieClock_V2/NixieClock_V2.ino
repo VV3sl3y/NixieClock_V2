@@ -31,10 +31,8 @@ int cathodeVar[6] = {};
 
 void setup() {
   //Free up PB3 & PB4
-  //afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);
-  pinF1_DisconnectDebug(PB_3);
-  pinF1_DisconnectDebug(PB_4);
-
+  afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);
+  
   //Start Serial communication
   Serial.begin(115200);
 
@@ -53,17 +51,18 @@ void setup() {
 
   //initialize WS2811B
   if (initLEDS()) {
+    setNeoColor(0, 230, 255);
 #ifdef DebugMode
     if (DebugMode >= 2)
     {
-      Serial.println("WS2811 initialized");
+      Serial.println("FastLED initialized");
     }
 #endif
   } else {
 #ifdef DebugMode
     if (DebugMode >= 2)
     {
-      Serial.println("Failed to initialize WS2811B");
+      Serial.println("Failed to initialize FastLED");
     }
 #endif
   }
@@ -83,12 +82,13 @@ void setup() {
 
   //initialize ESP
   if (initESP()) {
-#ifdef DebugMode
+    getEthernetTime();
+    getEthernetDate();
+    getEthernetEpoch();
     if (DebugMode >= 2)
     {
       Serial.println("ESP connected");
     }
-#endif
   } else {
 #ifdef DebugMode
     if (DebugMode >= 2)
@@ -122,13 +122,13 @@ void loop() {
       break;
 
     case MODE_UPDATE:
-#ifdef DebugMode
-      Serial.println("running time update");
-#endif
+      #ifdef DebugMode
+        Serial.println("running time update");
+      #endif
       RunUpdateMode();
-#ifdef DebugMode
-      Serial.println("Entering clock mode");
-#endif
+      #ifdef DebugMode
+        Serial.println("Entering clock mode");
+      #endif
       ClockState = MODE_TIME;
       break;
 
@@ -187,8 +187,6 @@ void RunDebugMode() {
 }
 
 void RunTimeMode() {
-  testFastLED();
-
   curMillis = millis();
   if ((curMillis - lastMillisCheckedRTC) > DisplayTimeUpdateInterval)
   {
@@ -226,8 +224,6 @@ void RunTimeMode() {
 }
 
 void RunDateMode() {
-  testFastLED();
-  
   curMillis = millis();
   if ((curMillis - lastMillisCheckedRTC) > DisplayDateUpdateInterval)
   {

@@ -1,43 +1,73 @@
-#include <STM32RTC.h>
+#include <RTClock.h>
 #include "ClientRTC.h"
 
-/* Get the rtc object */
-STM32RTC& rtc = STM32RTC::getInstance();
+RTClock rtclock (RTCSEL_LSE); // initialise
+time_t tt, tt1;
+tm_t mtt;
+uint8_t dateread[11];
 
-/* Change these values to set the current initial time */
-const byte seconds = 0;
-const byte minutes = 51;
-const byte hours = 17;
-
-/* Change these values to set the current initial date */
-/* Tuesday 31th December 2019 */
-const byte weekDay = 2;
-const byte day = 30;
-const byte month = 12;
-const byte year = 19;
+//-----------------------------------------------------------------------------
+const char * weekdays[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+const char * months[] = {"Dummy", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+//-----------------------------------------------------------------------------
+uint8_t str2month(const char * d)
+{
+    uint8_t i = 13;
+    while ( (--i) && strcmp(months[i], d)!=0 );
+    return i;
+}
+//-----------------------------------------------------------------------------
+const char * delim = " :";
+char s[128]; // for sprintf
+//-----------------------------------------------------------------------------
+void ParseBuildTimestamp(tm_t & mt)
+{
+    // Timestamp format: "Dec  8 2017, 22:57:54"
+    sprintf(s, "Timestamp: %s, %s\n", __DATE__, __TIME__);
+    char * token = strtok(s, delim); // get first token
+    // walk through tokens
+    while( token != NULL ) {
+        uint8_t m = str2month((const char*)token);
+        if ( m>0 ) {
+            mt.month = m;
+            token = strtok(NULL, delim); // get next token
+            mt.day = atoi(token);
+            token = strtok(NULL, delim); // get next token
+            mt.year = atoi(token) - 1970;
+            token = strtok(NULL, delim); // get next token
+            mt.hour = atoi(token);
+            token = strtok(NULL, delim); // get next token
+            mt.minute = atoi(token);
+            token = strtok(NULL, delim); // get next token
+            mt.second = atoi(token);
+        }
+        token = strtok(NULL, delim);
+    }
+}
+//-----------------------------------------------------------------------------
+// This function is called in the attachSecondsInterrupt
+//-----------------------------------------------------------------------------
+void SecondCount ()
+{
+  tt++;
+}
+//-----------------------------------------------------------------------------
+// This function is called in the attachAlarmInterrupt
+//-----------------------------------------------------------------------------
+void blink ()
+{
+  digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+}
+//-----------------------------------------------------------------------------
 
 bool initRTC()
 {
-  // Select RTC clock source: LSI_CLOCK, LSE_CLOCK or HSE_CLOCK.
-  // By default the LSI is selected as source.
-  //LSI = Low Speed Internal; LSE = Low Speed External; HSE = High Speed External
-  rtc.setClockSource(STM32RTC::LSE_CLOCK);
-
-  rtc.begin(); // initialize RTC 24H format
-
-  // Set the time
-  //rtc.setHours(hours);
-  //rtc.setMinutes(minutes);
-  //rtc.setSeconds(seconds);
-
-  // Set the date
-  //rtc.setWeekDay(weekDay);
-  //rtc.setDay(day);
-  //rtc.setMonth(month);
-  //rtc.setYear(year);
-
-  //rtc.setEpoch(1577725800);
-
+  rtclock.breakTime(rtclock.now(), mtt);
+  tt = rtclock.makeTime(mtt); // additional seconds to compensate build and upload delay
+  tt1 = tt;
+  rtclock.attachAlarmInterrupt(blink);// Call blink
+  rtclock.attachSecondsInterrupt(SecondCount);// Call SecondCount
+  
   return true;
 }
 
@@ -45,11 +75,12 @@ String getCurrentTime()
 {
   String curTime = "";
   // Get time
-  curTime += print2digits(rtc.getHours());
+  rtclock.breakTime(rtclock.now(), mtt);
+  curTime += print2digits(mtt.hour);
   //curTime += ":";
-  curTime += print2digits(rtc.getMinutes());
+  curTime += print2digits(mtt.minute);
   //curTime += ":";
-  curTime += print2digits(rtc.getSeconds());
+  curTime += print2digits(mtt.second);
 
   return curTime;
 }
@@ -58,11 +89,12 @@ String getCurrentDate()
 {
   String curDate = "";
   // Get date
-  curDate += print2digits(rtc.getDay());
+  rtclock.breakTime(rtclock.now(), mtt);
+  curDate += print2digits(mtt.day);
   //curTime += "-";
-  curDate += print2digits(rtc.getMonth());
+  curDate += print2digits(mtt.month);
   //curTime += "-";
-  curDate += print2digits(rtc.getYear());
+  curDate += print2digits(mtt.year - 30); //timenotation +1970 for current year, -2000 for propper show on nixies
 
   return curDate;
 }
@@ -76,12 +108,31 @@ String print2digits(int number) {
   return String(number);
 }
 
-/*bool UpdateRTC()
+void setNewTimeRTC(){
+  if ( Serial.available()>10 ) {
+    for (uint8_t i = 0; i<11; i++) {
+      dateread[i] = Serial.read();
+    }
+    Serial.flush();
+    tt = atol((char*)dateread);
+    rtclock.setTime(rtclock.TimeZone(tt, timezone)); //adjust to your local date
+  }
+}
+
+void setAlarmRTC(){
+  //rtclock.detachAlarmInterrupt();
+  //rtclock.createAlarm(OnOffSerial, (rtclock.getTime() + 20));   // call OnOffSerial stop output date from Serial after 2 mins
+}
+
+String getCurrentDateTime(){
+  if (tt1 != tt)
   {
-
-  }*/
-
-/*bool SetAlarm()
-  {
-
-  }*/
+    tt1 = tt;
+    // get and print actual RTC timestamp
+    rtclock.breakTime(rtclock.now(), mtt);
+    sprintf(s, "RTC timestamp: %s %u %u, %s, %02u:%02u:%02u\n",
+      months[mtt.month], mtt.day, mtt.year+1970, weekdays[mtt.weekday], mtt.hour, mtt.minute, mtt.second);
+    Serial.print(s);
+  }
+  return s;
+}

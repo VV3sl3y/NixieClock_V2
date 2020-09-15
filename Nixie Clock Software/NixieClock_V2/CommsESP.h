@@ -8,9 +8,11 @@
 #define GET_RSSI "GetSignalStrength"
 #define GET_TIME "GetTime"
 #define GET_DATE "GetDate"
+#define GET_EPOCH "GetEpoch"
 
 bool initESP();
 String getEthernetTime();
 String getEthernetDate();
+String getEthernetEpoch();
 int getSignalStrenght();
 String receiveDataESP(String);

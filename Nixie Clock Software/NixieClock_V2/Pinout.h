@@ -19,7 +19,7 @@ bool initPins();
 #define HVON PA8 //optional solder pad
 
 //#define ProgRX PA9 //reserved for programming
-//#define PROGRX PA10 //reserved for programming
+//#define ProgRX PA10 //reserved for programming
 
 //#define USB_DataP PA11 //placeholder
 //#define USB_DataM PA12 //placeholder
@@ -41,8 +41,9 @@ bool initPins();
 #define N_Driver_D PB14 //Nixie Driver D signal
 #define N_Driver_A PB15 //Nixie Driver A signal
 
-#define RX_ESP PB6 //RX of the ESP (bluepill TX)
-#define TX_ESP PB7 //TX of the ESP (bluepill RX)
+//note to self PCB V2.0 has false pinout of RX TX on the MCU
+#define RX_ESP PB6 //RX of the ESP (bluepill TX, SCL)
+#define TX_ESP PB7 //TX of the ESP (bluepill RX, SDA)
 
 #define LED_RTC PC13 //RTC LED
 

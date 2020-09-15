@@ -33,9 +33,12 @@ bool initPins() {
 
   digitalWrite(LED_Data, LOW);
 
-  //making sure the ESP is active by setting output high for /rst & /flash
-  digitalWrite(Flash_ESP, HIGH);
-  digitalWrite(RST_ESP, HIGH);
+  //making sure the ESP is reset setting output low for /rst & /flash
+  digitalWrite(Flash_ESP, LOW);
+  digitalWrite(RST_ESP, LOW);
+
+  digitalWrite(RX_ESP, LOW);
+  digitalWrite(TX_ESP, LOW);
 
   digitalWrite(Buzzer, LOW);
 
