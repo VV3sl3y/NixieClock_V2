@@ -67,13 +67,11 @@ void TimeClient::updateTime() {
         int parsedMinutes = line.substring(26, 28).toInt();
         int parsedSeconds = line.substring(29, 31).toInt();
         int parsedDays = line.substring(12, 14).toInt();
-        int parsedMonths = ConvertToNumericDate(line.substring(14, 17));
+        int parsedMonths = ConvertToNumericMonth(line.substring(14, 17));
         int parsedYears = line.substring(18, 22).toInt();
         Serial.println(String(parsedHours) + ":" + String(parsedMinutes) + ":" + String(parsedSeconds));
         Serial.println(String(parsedDays) + ":" + String(parsedMonths) + ":" + String(parsedYears));
-        localEpoc = ((parsedYears - 1970) * 365 * 24 * 60 * 60 + parsedMonths * 30 * 60 * 60 + parsedDays * 24 * 60 * 60 + parsedHours * 60 * 60 + parsedMinutes * 60 + parsedSeconds); //not counting the months due to them not being needed to calculate epoch
-        Serial.println(localEpoc);
-        localMillisAtUpdate = millis();
+        localEpoc = convertTimeToEpoch(parsedYears, parsedMonths, parsedDays, parsedHours, parsedMinutes, parsedSeconds);
         client.stop();
       }
     }
@@ -122,7 +120,7 @@ String TimeClient::getDay() {
     if (localEpoc == 0) {
       return "--";
     }
-    int days = getCurrentEpochWithUtcOffset() % (24 * 60 * 60);
+    int days = day(getCurrentEpochWithUtcOffset());
     if ( days < 10 ) {
       // In the first 10 days of each minute, we'll want a leading '0'
       return "0" + String(days);
@@ -133,7 +131,7 @@ String TimeClient::getMonth() {
     if (localEpoc == 0) {
       return "--";
     }
-    int months = getCurrentEpochWithUtcOffset() % (30 * 24 * 60 * 60);
+    int months = month(getCurrentEpochWithUtcOffset());
     if ( months < 10 ) {
       // In the first 10 months of each minute, we'll want a leading '0'
       return "0" + String(months);
@@ -144,7 +142,7 @@ String TimeClient::getYear() {
     if (localEpoc == 0) {
       return "--";
     }
-    int years = (getCurrentEpochWithUtcOffset() % (365 * 24 * 60 * 60)) + 50;
+    int years = year(getCurrentEpochWithUtcOffset());
     if ( years < 10 ) {
       // In the first 10 years of each minute, we'll want a leading '0'
       return "0" + String(years);
@@ -152,7 +150,7 @@ String TimeClient::getYear() {
     return String(years);
 }
 
-int TimeClient::ConvertToNumericDate(String curMonth){
+int TimeClient::ConvertToNumericMonth(String curMonth){
   if(curMonth == "JAN"){ return 1; }
   else if(curMonth == "FEB"){ return 2; }
   else if(curMonth == "MAR"){ return 3; }
@@ -200,10 +198,14 @@ String TimeClient::getFormattedDate(){
   return getDay() + "-" + getMonth() + "-" + getYear();
 }
 
-long TimeClient::getCurrentEpoch() {
+time_t TimeClient::convertTimeToEpoch(long parsedYears, long parsedMonths, long parsedDays, long parsedHours, long parsedMinutes, long parsedSeconds) {
+  return ((parsedYears - 1970) * 365 * 86400) + (parsedDays * 86400) + (parsedHours * 3600) + (parsedMinutes * 60) + parsedSeconds;
+}
+
+time_t TimeClient::getCurrentEpoch() {
   return localEpoc + ((millis() - localMillisAtUpdate) / 1000);
 }
 
-long TimeClient::getCurrentEpochWithUtcOffset() {
+time_t TimeClient::getCurrentEpochWithUtcOffset() {
   return (long)round(getCurrentEpoch() + 3600 * myUtcOffset + 86400L) % 86400L;
 }

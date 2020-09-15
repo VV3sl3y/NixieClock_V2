@@ -161,7 +161,7 @@ void loop() {
       }
       else if(command == "GetEpoch")
       {
-        long int currentEpoch = timeClient.getCurrentEpoch();
+        uint32_t currentEpoch = timeClient.getCurrentEpoch();
         Serial.print(String(currentEpoch) + ";");
       }
       else if(command == "GetSignalStrength")

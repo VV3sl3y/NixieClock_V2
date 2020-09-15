@@ -56,11 +56,12 @@ class TimeClient {
     String getDay();
     String getMonth();
     String getYear();
-    int ConvertToNumericDate(String);
+    int ConvertToNumericMonth(String);
     String getFormattedTime();
     String getAmPmFormattedTime();
     String getFormattedDate();
-    long getCurrentEpoch();
-    long getCurrentEpochWithUtcOffset();
+    time_t convertTimeToEpoch(long parsedYears, long parsedMonths, long parsedDays, long parsedHours, long parsedMinutes, long parsedSeconds);
+    time_t getCurrentEpoch();
+    time_t getCurrentEpochWithUtcOffset();
 
 };
