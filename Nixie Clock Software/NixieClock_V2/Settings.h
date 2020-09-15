@@ -11,7 +11,7 @@
 
 #define BRIGHTNESS  32
 
-#define timezone 1      // change to your timezone
+#define timezone 2      // change to your timezone
 
 //Times are in milliseconds
 #define DisplayTimeUpdateInterval 100 //refresh time to request current time

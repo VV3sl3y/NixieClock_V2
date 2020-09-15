@@ -34,8 +34,13 @@ void setup() {
   afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);
   
   //Start Serial communication
-  Serial.begin(115200);
-
+  #ifdef DebugMode
+    if (DebugMode > 0)
+    {
+      Serial.begin(115200);
+    }
+  #endif
+  
   //set pinmodes
   if (initPins()) {
     if (DebugMode >= 2)
@@ -51,6 +56,7 @@ void setup() {
 
   //initialize WS2811B
   if (initLEDS()) {
+    ERROR FastLED, implementeer animaties in LEDS
     setNeoColor(0, 230, 255);
 #ifdef DebugMode
     if (DebugMode >= 2)
@@ -84,25 +90,36 @@ void setup() {
   if (initESP()) {
     getEthernetTime();
     getEthernetDate();
-    getEthernetEpoch();
+    setNewTimeRTC(stringToLong(getEthernetEpoch()));  ERROR NOTE: QND RTC FIX, NEED TO ADJUST FOR TIMEZONE?!?
+    ERROR ESP Edit: laat de initialisatie lopen en start de klok alvast op, dan d.m.v. millis zoals in de loop de boel synchroniseren als er connectie is. Tevens inbouwen dan tijden < build tijd niet geldig zijn
+    ESP niet verbonden/geen internet, na x keer niet meer proberen te connecten/ timeout voor nieuwe poging. RTC tijd NIET aanpassen.
     if (DebugMode >= 2)
     {
       Serial.println("ESP connected");
     }
   } else {
-#ifdef DebugMode
+    #ifdef DebugMode
     if (DebugMode >= 2)
     {
       Serial.println("ESP connection failed");
     }
-#endif
+    #endif
   }
 
-  ClockState = MODE_TIME;
+  ClockState = MODE_UPDATE;
+}
+
+ERROR NOTE: QND FOR LINE 87
+unsigned long long stringToLong(String s)
+{
+   char arr[12];
+   s.toCharArray(arr, sizeof(arr));
+   return atoll(arr);
 }
 
 // the loop function runs over and over again forever
 void loop() {
+  ERROR: implementeer afvangen beschikbare data ESP (aanvraag data beschikbaar??)
   switch (ClockState) {
     case MODE_DEBUG:
       RunDebugMode();

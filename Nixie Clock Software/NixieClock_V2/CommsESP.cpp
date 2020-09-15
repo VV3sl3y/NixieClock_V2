@@ -1,6 +1,8 @@
 #include "CommsESP.h"
 #include "Pinout.h"
 
+#define DebugMode 2
+
 //#include <SoftwareSerial.h>
 //SoftwareSerial portESP(RX_ESP, TX_ESP);
 
@@ -15,28 +17,36 @@ bool initESP()
   
   //activate ESP
   digitalWrite(Flash_ESP, HIGH);
-  delay(5);
+  delay(50);
   digitalWrite(RST_ESP, HIGH);
+  delay(50);
 
-  SWSerialESP.flush();
+  delay(5000);
   
-  delay(10000);
-
   //get garbage from STM start
   SWSerialESP.flush();
-  SWSerialESP.print("Init" + ';');
-  delay(50);
-  String tmpMessage = SWSerialESP.readStringUntil(';');
-  delay(50);
+  delay(100);
+  SWSerialESP.readString();
+  delay(100);
 
-  String cmdResponse = receiveDataESP(IS_ESP_CONNECTED);
-  if (cmdResponse != ESP_CONNECTED)
+  if(checkConnectionESP())
   {
-    #ifdef DebugMode
-    if(DebugMode >= 2){
-      Serial.println("recvData returned: " + cmdResponse);
-    }
-    #endif
+    return true;
+  }
+
+  return false;
+}
+
+bool checkConnectionESP()
+{
+  #ifdef DebugMode
+  if(DebugMode >= 3){
+      Serial.println("now executing checkConnectionESP() ");
+  }
+  #endif
+  String cmdResponse = receiveDataESP(IS_ESP_CONNECTED);
+  if (cmdResponse == ESP_CONNECTED)
+  {
     return false;
   }
   return true;
@@ -44,6 +54,11 @@ bool initESP()
 
 String getEthernetTime()
 {
+  #ifdef DebugMode
+  if(DebugMode >= 3){
+      Serial.println("now executing getEthernetTime() ");
+  }
+  #endif
   String tmpMessage = receiveDataESP(GET_TIME);
   if (tmpMessage == "" || tmpMessage ==  "Max tries hit!")
   {
@@ -57,6 +72,11 @@ String getEthernetTime()
 
 String getEthernetDate()
 {
+  #ifdef DebugMode
+  if(DebugMode >= 3){
+      Serial.println("now executing getEthernetDate() ");
+  }
+  #endif
   String tmpMessage = receiveDataESP(GET_DATE);
   if (tmpMessage == "" || tmpMessage ==  "Max tries hit!")
   {
@@ -70,6 +90,11 @@ String getEthernetDate()
 
 String getEthernetEpoch()
 {
+  #ifdef DebugMode
+  if(DebugMode >= 3){
+      Serial.println("now executing getEthernetEpoch() ");
+  }
+  #endif
   String tmpMessage = receiveDataESP(GET_EPOCH);
   if (tmpMessage == "" || tmpMessage ==  "Max tries hit!")
   {
@@ -83,6 +108,11 @@ String getEthernetEpoch()
 
 int getSignalStrenght()
 {
+  #ifdef DebugMode
+  if(DebugMode >= 3){
+      Serial.println("now executing getSignalStrenght() ");
+  }
+  #endif
   if (receiveDataESP(GET_RSSI) == "")
   {
 
@@ -95,11 +125,16 @@ int getSignalStrenght()
 
 String receiveDataESP(String command)
 {
+  #ifdef DebugMode
+  if(DebugMode >= 3){
+      Serial.println("now executing receiveDataESP() ");
+  }
+  #endif
   String tmpMessage = "";
-  int maxTries = 10;
+  int maxTries = 25;
 
   SWSerialESP.listen();
-  delay(10);
+  delay(20);
   SWSerialESP.flush();
   SWSerialESP.print(command + ';');
   delay(50);
@@ -110,11 +145,16 @@ String receiveDataESP(String command)
     {
       tmpMessage = SWSerialESP.readStringUntil(';');
       delay(30);
-      Serial.println("Following message received from ESP: " + tmpMessage);
+      #ifdef DebugMode
+      if(DebugMode >= 2){
+        Serial.println("Following message received from ESP: " + tmpMessage);
+      }
+      #endif
       return tmpMessage;
     }
     else
     {
+      SWSerialESP.flush();
       SWSerialESP.println(command + ';');
     }
 

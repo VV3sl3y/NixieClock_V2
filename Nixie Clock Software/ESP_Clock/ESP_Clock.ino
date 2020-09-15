@@ -200,9 +200,9 @@ void displayHomePage() {
   server.send(200, "text/html", "");*/
   server.sendContent(String(getHeader(true)));
 
-  String displayTime = timeClient.getAmPmHours() + ":" + timeClient.getMinutes() + ":" + timeClient.getSeconds() + " " + timeClient.getAmPm();
+  String displayTime = timeClient.getAmPmFormattedTime();
   if (IS_24HOUR) {
-    displayTime = timeClient.getHours() + ":" + timeClient.getMinutes() + ":" + timeClient.getSeconds();
+    displayTime = timeClient.getFormattedTime();
   }
   
   html += "<div class='w3-cell-row' style='width:100%'><h2>Time: " + displayTime + "</h2></div><div class='w3-cell-row'>";

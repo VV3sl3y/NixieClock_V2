@@ -94,7 +94,7 @@ String getCurrentDate()
   //curTime += "-";
   curDate += print2digits(mtt.month);
   //curTime += "-";
-  curDate += print2digits(mtt.year - 30); //timenotation +1970 for current year, -2000 for propper show on nixies
+  curDate += print2digits(mtt.year - 30); //timenotation +1970 for current year, -2000 for propper show on nixies (last 2 digits)
 
   return curDate;
 }
@@ -108,15 +108,8 @@ String print2digits(int number) {
   return String(number);
 }
 
-void setNewTimeRTC(){
-  if ( Serial.available()>10 ) {
-    for (uint8_t i = 0; i<11; i++) {
-      dateread[i] = Serial.read();
-    }
-    Serial.flush();
-    tt = atol((char*)dateread);
-    rtclock.setTime(rtclock.TimeZone(tt, timezone)); //adjust to your local date
-  }
+void setNewTimeRTC(unsigned long timeEpoch){
+    rtclock.setTime(rtclock.TimeZone(timeEpoch, timezone)); //adjust to your local date
 }
 
 void setAlarmRTC(){

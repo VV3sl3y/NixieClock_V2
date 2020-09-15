@@ -35,139 +35,39 @@ TimeClient::TimeClient(float utcOffset) {
 void TimeClient::updateTime() {
   WiFiClient client;
   
-  if (!client.connect(ntpServerName, httpPort)) {
-    Serial.println("connection failed");
-    return;
+  int counter = 0;
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(200);
+    if (++counter > 250) ESP.restart();
   }
+  Serial.println("\n\nWiFi connected\n\n");
 
   // This will send the request to the server
-  client.print(String("GET / HTTP/1.1\r\n") +
-               String("Host: www.google.com\r\n") +
-               String("Connection: close\r\n\r\n"));
-  int repeatCounter = 0;
-  while(!client.available() && repeatCounter < 10) {
-    delay(1000);
-    Serial.println(".");
-    repeatCounter++;
-  }
-
-  String line;
-
-  int size = 0;
-  client.setNoDelay(false);
-  while(client.connected()) {
-    while((size = client.available()) > 0) {
-      line = client.readStringUntil('\n');
-      line.toUpperCase();
-      // example:
-      // date: Thu, 19 Nov 2015 20:25:40 GMT
-      if (line.startsWith("DATE: ")) {
-        Serial.println(line.substring(23, 25) + ":" + line.substring(26, 28) + ":" +line.substring(29, 31));
-        int parsedHours = line.substring(23, 25).toInt();
-        int parsedMinutes = line.substring(26, 28).toInt();
-        int parsedSeconds = line.substring(29, 31).toInt();
-        int parsedDays = line.substring(12, 14).toInt();
-        int parsedMonths = ConvertToNumericMonth(line.substring(14, 17));
-        int parsedYears = line.substring(18, 22).toInt();
-        Serial.println(String(parsedHours) + ":" + String(parsedMinutes) + ":" + String(parsedSeconds));
-        Serial.println(String(parsedDays) + ":" + String(parsedMonths) + ":" + String(parsedYears));
-        localEpoc = convertTimeToEpoch(parsedYears, parsedMonths, parsedDays, parsedHours, parsedMinutes, parsedSeconds);
-        client.stop();
-      }
-    }
-  }
+  configTime(0, 0, ntpServer);
+  // See https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv for Timezone codes for your region
+  setenv("TZ", TZ_INFO, 1);
+  
+  uint32_t start = millis();
+    do {
+      time(&now);
+      localtime_r(&now, &timeinfo);
+      delay(10);
+    } while (((millis() - start) <= (1000 * 60)) && (timeinfo.tm_year < (2016 - 1900)));
+    //if (timeinfo.tm_year <= (2016 - 1900))  // the NTP call was not successful
+  
+  Serial.println(getFormattedTime());
+  Serial.println(getFormattedDate());
+  Serial.println(getCurrentEpoch());
+  localEpoc = time(&now);
+  localMillisAtUpdate = millis();
 }
 
 void TimeClient::setUtcOffset(float utcOffset) {
 	myUtcOffset = utcOffset;
 }
 
-String TimeClient::getHours() {
-    if (localEpoc == 0) {
-      return "--";
-    }
-    int hours = ((getCurrentEpochWithUtcOffset()  % 86400L) / 3600) % 24;
-    if (hours < 10) {
-      return "0" + String(hours);
-    }
-    return String(hours); // print the hour (86400 equals secs per day)
-
-}
-String TimeClient::getMinutes() {
-    if (localEpoc == 0) {
-      return "--";
-    }
-    int minutes = ((getCurrentEpochWithUtcOffset() % 3600) / 60);
-    if (minutes < 10 ) {
-      // In the first 10 minutes of each hour, we'll want a leading '0'
-      return "0" + String(minutes);
-    }
-    return String(minutes);
-}
-String TimeClient::getSeconds() {
-    if (localEpoc == 0) {
-      return "--";
-    }
-    int seconds = getCurrentEpochWithUtcOffset() % 60;
-    if ( seconds < 10 ) {
-      // In the first 10 seconds of each minute, we'll want a leading '0'
-      return "0" + String(seconds);
-    }
-    return String(seconds);
-}
-
-String TimeClient::getDay() {
-    if (localEpoc == 0) {
-      return "--";
-    }
-    int days = day(getCurrentEpochWithUtcOffset());
-    if ( days < 10 ) {
-      // In the first 10 days of each minute, we'll want a leading '0'
-      return "0" + String(days);
-    }
-    return String(days);
-}
-String TimeClient::getMonth() {
-    if (localEpoc == 0) {
-      return "--";
-    }
-    int months = month(getCurrentEpochWithUtcOffset());
-    if ( months < 10 ) {
-      // In the first 10 months of each minute, we'll want a leading '0'
-      return "0" + String(months);
-    }
-    return String(months);
-}
-String TimeClient::getYear() {
-    if (localEpoc == 0) {
-      return "--";
-    }
-    int years = year(getCurrentEpochWithUtcOffset());
-    if ( years < 10 ) {
-      // In the first 10 years of each minute, we'll want a leading '0'
-      return "0" + String(years);
-    }
-    return String(years);
-}
-
-int TimeClient::ConvertToNumericMonth(String curMonth){
-  if(curMonth == "JAN"){ return 1; }
-  else if(curMonth == "FEB"){ return 2; }
-  else if(curMonth == "MAR"){ return 3; }
-  else if(curMonth == "APR"){ return 4; }
-  else if(curMonth == "MAY"){ return 5; }
-  else if(curMonth == "JUN"){ return 6; }
-  else if(curMonth == "JUL"){ return 7; }
-  else if(curMonth == "AUG"){ return 8; }
-  else if(curMonth == "SEP"){ return 9; }
-  else if(curMonth == "OCT"){ return 10; }
-  else if(curMonth == "NOV"){ return 11; }
-  else if(curMonth == "DEC"){ return 12; }
-  else { return 0; }
-}
-
 String TimeClient::getAmPmHours() {
-	int hours = getHours().toInt();
+	int hours = timeinfo.tm_hour;
 	if (hours >= 13) {
 		hours = hours - 12;
 	}
@@ -178,7 +78,7 @@ String TimeClient::getAmPmHours() {
 }
 
 String TimeClient::getAmPm() {
-	int hours = getHours().toInt();
+	int hours = timeinfo.tm_hour;
 	String ampmValue = "AM";
 	if (hours >= 12) {
 		ampmValue = "PM";
@@ -187,25 +87,24 @@ String TimeClient::getAmPm() {
 }
 
 String TimeClient::getFormattedTime() {
-  return getHours() + ":" + getMinutes() + ":" + getSeconds();
+  return CheckLeadingZero(timeinfo.tm_hour) + ":" + CheckLeadingZero(timeinfo.tm_min) + ":" + CheckLeadingZero(timeinfo.tm_sec);
 }
 
 String TimeClient::getAmPmFormattedTime() {
-	return getAmPmHours() + ":" + getMinutes() + " " + getAmPm();
+	return getAmPmHours() + ":" + CheckLeadingZero(timeinfo.tm_min) + " " + getAmPm();
 }
 
 String TimeClient::getFormattedDate(){
-  return getDay() + "-" + getMonth() + "-" + getYear();
-}
-
-time_t TimeClient::convertTimeToEpoch(long parsedYears, long parsedMonths, long parsedDays, long parsedHours, long parsedMinutes, long parsedSeconds) {
-  return ((parsedYears - 1970) * 365 * 86400) + (parsedDays * 86400) + (parsedHours * 3600) + (parsedMinutes * 60) + parsedSeconds;
+  return CheckLeadingZero(timeinfo.tm_mday) + "-" + CheckLeadingZero(timeinfo.tm_mon) + "-" + CheckLeadingZero(timeinfo.tm_year);
 }
 
 time_t TimeClient::getCurrentEpoch() {
-  return localEpoc + ((millis() - localMillisAtUpdate) / 1000);
+  return now;
 }
 
-time_t TimeClient::getCurrentEpochWithUtcOffset() {
-  return (long)round(getCurrentEpoch() + 3600 * myUtcOffset + 86400L) % 86400L;
+String TimeClient::CheckLeadingZero(int TimeDate) {
+    if (TimeDate < 10) {
+        return "0" + String(TimeDate);
+    }
+    return String(TimeDate);
 }

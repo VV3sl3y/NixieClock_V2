@@ -5,6 +5,6 @@ bool initRTC();
 String getCurrentTime();
 String getCurrentDate();
 String print2digits(int number);
-void setNewTimeRTC();
+void setNewTimeRTC(unsigned long);
 void setAlarmRTC();
 String getCurrentDateTime();

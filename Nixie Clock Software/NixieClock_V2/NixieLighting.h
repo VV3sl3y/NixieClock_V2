@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "Settings.h"
-#include "FastLED.h"
+#include <FastLED.h>
 
 #define LED_PIN     LED_Data
 #define NUM_LEDS    NumberOfNixies
