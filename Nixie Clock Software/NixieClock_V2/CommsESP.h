@@ -11,6 +11,7 @@
 #define GET_EPOCH "GetEpoch"
 
 bool initESP();
+bool checkConnectionESP();
 String getEthernetTime();
 String getEthernetDate();
 String getEthernetEpoch();
