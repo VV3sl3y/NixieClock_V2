@@ -14,9 +14,9 @@ The used libraries for the ESP are:
 - WiFiManager
 
 The used libraries for the STM are:
-- STM32 library
-- STM32 RTC library
-- FastLED
+- STM32 library (STM32Duino.com)
+- STM32 RTC library (RTCClock.h)
+- FastLED (editted for STM32 bluepill)
 
 http://arduino.esp8266.com/stable/package_esp8266com_index.json
 http://dan.drown.org/stm32duino/package_STM32duino_index.json
