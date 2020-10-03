@@ -1,6 +1,9 @@
 #include <RTClock.h>
 #include "ClientRTC.h"
 
+const char* delim = " :";
+char s[128];  // for sprintf
+
 RTClock rtclock (RTCSEL_LSE); // initialise
 time_t tt, tt1;
 tm_t mtt;

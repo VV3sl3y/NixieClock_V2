@@ -1,9 +1,6 @@
 #include <Arduino.h>
 #include "Settings.h"
 
-const char* delim = " :";
-char s[128];  // for sprintf
-
 bool initRTC();
 String getCurrentTime();
 String getCurrentDate();
