@@ -159,11 +159,6 @@ void loop() {
         String currentDate = timeClient.getFormattedDate();
         Serial.print(currentDate + ";");
       }
-      else if(command == "GetEpoch")
-      {
-        uint32_t currentEpoch = timeClient.getCurrentEpoch();
-        Serial.print(String(currentEpoch) + ";");
-      }
       else if(command == "GetSignalStrength")
       {
         int8_t rssi = 95;
@@ -230,7 +225,6 @@ void getUpdateTime() {
   #endif
   //Update the Time
   timeClient.updateTime();
-  lastEpoch = timeClient.getCurrentEpoch();
   #ifdef DebugMode
   Serial.print("Local time: " + timeClient.getAmPmFormattedTime());
   #endif
@@ -349,7 +343,6 @@ void handleUpdateConfig() {
   temp = server.arg("stationpassword");
   temp.toCharArray(www_password, sizeof(temp));
   writeSettings();
-  lastEpoch = 0;
   redirectHome();
 }
 

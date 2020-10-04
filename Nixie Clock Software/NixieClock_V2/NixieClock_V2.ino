@@ -46,7 +46,8 @@ int cathodeVar[6] = {};
 
 void setup() {
 	//Free up PB3 & PB4
-	//afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);
+	afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);
+
   
 	//Start Serial communication
 	#ifdef DebugMode

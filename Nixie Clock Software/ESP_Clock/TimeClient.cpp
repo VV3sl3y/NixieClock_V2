@@ -57,7 +57,6 @@ void TimeClient::updateTime() {
   
   Serial.println(getFormattedTime());
   Serial.println(getFormattedDate());
-  Serial.println(getCurrentEpoch());
   localEpoc = time(&now);
   localMillisAtUpdate = millis();
 }
@@ -96,10 +95,6 @@ String TimeClient::getAmPmFormattedTime() {
 
 String TimeClient::getFormattedDate(){
   return CheckLeadingZero(timeinfo.tm_mday) + "-" + CheckLeadingZero(timeinfo.tm_mon) + "-" + CheckLeadingZero(timeinfo.tm_year);
-}
-
-time_t TimeClient::getCurrentEpoch() {
-  return now;
 }
 
 String TimeClient::CheckLeadingZero(int TimeDate) {

@@ -65,8 +65,6 @@ class TimeClient {
     String getAmPmFormattedTime();
     String getFormattedDate();
     
-    time_t convertTimeToEpoch(long parsedYears, long parsedMonths, long parsedDays, long parsedHours, long parsedMinutes, long parsedSeconds);
-    time_t getCurrentEpoch();
     time_t getCurrentEpochWithUtcOffset();
 
     void showTime(tm localTime);
