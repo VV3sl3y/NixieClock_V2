@@ -18,23 +18,45 @@ ERROR prios:
   - Maak een update available voor esp vs stm
   - bekijk notities en errors
   - uncomment define todolist voor meer
+	
+	Voor de tijdscheck bij opstarten:
+	bij setup, vraag parsebuildtimestamp aan
+	als huidige RTC tijd < parsebuildtimestamp: RTC tijd = parsebuildtimestamp ? RTC tijd = RTC tijd
+	Bij ESP tijd zelfde: RTC tijd < ESP tijd: RTC tijd = ESP tijd ? RTC tijd = RTC tijd
+	Originele RTCClock  code:
+	  ParseBuildTimestamp(mtt);  // get the Unix epoch Time counted from 00:00:00 1 Jan 1970
+	  tt = rtclock.makeTime(mtt) + 25; // additional seconds to compensate build and upload delay
+	  rtclock.setTime(tt);
+
+	voor de commando's, vlag toevoegen welke bijhoud of er een commando bezig is om de tijdsweergave zo min mogelijk te beinvloeden
 #endif
 
 enum CLOCK_MODE
 {
-  MODE_DEBUG,
-  MODE_TIME,
-  MODE_DATE,
-  MODE_PCP,
-  MODE_UPDATE,
-  MODE_ERROR
+	MODE_DEBUG,
+	MODE_TIME,
+	MODE_DATE,
+	MODE_PCP,
+	MODE_UPDATE_TIME,
+	MODE_UPDATE_ESPDATA,
+	MODE_ERROR
 } ClockState;
 
+enum ESP_MODE
+{
+	ESP_FREE,
+	ESP_AWAITING_ANSWER,
+	ESP_COMMAND_REDO
+} ESP_State;
+
 CLOCK_MODE NewClockState = MODE_TIME;
+CLOCK_MODE CurrentClockState;
 
 int lastMillisCheckedRTC = 0;
 int lastMillisPCP = 0;
 int lastMillisSwitchMode = 0;
+int lastMillisConnectionESP = 0;
+int lastMillisUpdatedESP = 0;
 int curMillis = 0;
 
 int cycleCurrent = 0;
@@ -44,10 +66,20 @@ int timeVar[6] = {};
 int dateVar[6] = {};
 int cathodeVar[6] = {};
 
+bool ConnectedESP = false;
+bool MaxTriesHit = false;
+String CurrentProcessingCommand = "";
+int NumberOfConnectionTries = 0;
+
+bool DateUpdated = false;
+bool TimeUpdated = false;
+bool RTCUpdated = false;
+String currentDateESP;
+String currentTimeESP;
+
 void setup() {
 	//Free up PB3 & PB4
 	afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);
-
   
 	//Start Serial communication
 	#ifdef DebugMode
@@ -128,7 +160,8 @@ void setup() {
 		#endif
 	}
 
-	ClockState = MODE_UPDATE;
+	ClockState = MODE_TIME;
+	ESP_State = ESP_FREE;
 }
 
 #pragma region Functions
@@ -226,7 +259,7 @@ void RunDebugMode() {
 
 void RunTimeMode() {
 	curMillis = millis();
-	if ((curMillis - lastMillisCheckedRTC) > DisplayTimeUpdateInterval)
+	if ((curMillis - lastMillisCheckedRTC) > DisplayTimeUpdateInterval || curMillis < 0)
 	{
 		updateTimeVar();
 
@@ -235,7 +268,7 @@ void RunTimeMode() {
 #ifdef DebugMode
 		if (DebugMode >= 2)
 		{
-			Serial.println("curmillis:" + String(curMillis) + "   oldMillisTimeRTC:" + String(lastMillisCheckedRTC));
+			Serial.println("curmillis:" + String(curMillis) + "   oldMillisTimeCheckedRTC:" + String(lastMillisCheckedRTC));
 		}
 #endif
 
@@ -263,7 +296,7 @@ void RunTimeMode() {
 
 void RunDateMode() {
 	curMillis = millis();
-	if ((curMillis - lastMillisCheckedRTC) > DisplayDateUpdateInterval)
+	if ((curMillis - lastMillisCheckedRTC) > DisplayDateUpdateInterval || curMillis < 0)
 	{
 		updateDateVar();
 
@@ -291,7 +324,7 @@ void RunDateMode() {
 
 void RunPreventionCathodePoisoning(CLOCK_MODE State) {
 	curMillis = millis();
-	if ((curMillis - lastMillisPCP) > PCP_INTERVAL) {
+	if ((curMillis - lastMillisPCP) > PCP_INTERVAL || curMillis < 0) {
 		lastMillisPCP = millis();
 		if (State == MODE_TIME) {
 			updateTimeVar();
@@ -367,26 +400,87 @@ void RunPreventionCathodePoisoning(CLOCK_MODE State) {
 	}
 }
 
+void RunUpdateESPMode()
+{
+	String CommandResult = "";
+	
+	switch (ESP_State)
+	{
+	case ESP_FREE:
+		sendDataESP(CurrentProcessingCommand);
+		ESP_State = ESP_AWAITING_ANSWER;
+		break;
+		
+	case ESP_AWAITING_ANSWER:
+		if (CurrentProcessingCommand  == IS_ESP_CONNECTED) {
+			CommandResult = receiveDataESP();
+			if (CommandResult == ESP_CONNECTED)
+			{
+				ConnectedESP = true;
+			}
+			else
+			{
+				ConnectedESP = false;
+				NumberOfConnectionTries++;
+				if (NumberOfConnectionTries >= Max_ESPConnection_Retries)
+				{
+					MaxTriesHit = true;
+				}
+			}
+		}
+		else if (CurrentProcessingCommand  == GET_DATE) {
+			CommandResult = receiveDataESP();
+			if (CommandResult != "")
+			{
+				currentDateESP = CommandResult;
+				DateUpdated = true;
+			}
+		}
+		else if (CurrentProcessingCommand  == GET_TIME) {
+			CommandResult = receiveDataESP();
+			if (CommandResult != "")
+			{
+				currentTimeESP = CommandResult;
+				TimeUpdated = true;
+			}
+		}
+		else if (CurrentProcessingCommand  == GET_RSSI) {
+			
+		}
+		else if (CurrentProcessingCommand  == NO_DATA_RETURNED) {
+			
+		}
+		else {
+			 //laatste slimigheierrord inbouwen afhandeling commandos
+		}
+		ESP_State = ESP_FREE; //temp dummy to get through the code
+		break;
+		
+	case ESP_COMMAND_REDO:
+		sendDataESP(CurrentProcessingCommand);
+		break;
+		
+	default:
+		break;
+	}
+	if (!RTCUpdated && DateUpdated && TimeUpdated) {
+		setNewTimeRTC(stringToTime(currentDateESP, currentTimeESP));
+		RTCUpdated = true;
+	}
+}
+
 void RunUpdateMode()
 {
-	String currentTimeESP = getEthernetTime();
-	String currentDateESP = getEthernetDate();
-	//String currentEpochESP = getEthernetEpoch();
-
 #ifdef DebugMode
 	  if(DebugMode >= 1)
 	{
 		Serial.println("New ethernet time: " + currentTimeESP);
 		Serial.println("New ethernet date: " + currentDateESP);
-		//Serial.println("New ethernet epoch: " + currentEpochESP);
-    
-#ifdef TODO_LIST
-		ERROR :
-		  waarom klapt de code er in godsnaam uit als ik settime doe ?  !?
-#endif
-		      Serial.println("Setting time!");
-		time_t newTime = stringToTime(currentDateESP, currentTimeESP);
-		setNewTimeRTC(newTime);
+		if (currentDateESP != "" && currentTimeESP != "") {
+			Serial.println("Setting time!");
+			time_t newTime = stringToTime(currentDateESP, currentTimeESP);
+			setNewTimeRTC(newTime + 35); //compensation for reading serial
+		}
 	}
 #endif
 
@@ -426,7 +520,7 @@ void loop() {
 	switch (ClockState) {
 	case MODE_DEBUG:
 		RunDebugMode();
-		ClockState = MODE_UPDATE;
+		ClockState = MODE_TIME;
 		break;
 
 	case MODE_TIME:
@@ -441,7 +535,7 @@ void loop() {
 		RunPreventionCathodePoisoning(NewClockState);
 		break;
 
-	case MODE_UPDATE:
+	case MODE_UPDATE_TIME:
 	  #ifdef DebugMode
 		Serial.println("running time update");
 	  #endif
@@ -450,6 +544,11 @@ void loop() {
 		Serial.println("Entering clock mode");
 	  #endif
 		ClockState = MODE_TIME;
+		break;
+		
+	case MODE_UPDATE_ESPDATA:
+		RunUpdateESPMode();
+		ClockState = CurrentClockState;
 		break;
 
 	case MODE_ERROR:
@@ -461,7 +560,7 @@ void loop() {
 	}
   
 	curMillis = millis();
-	if ((curMillis - lastMillisSwitchMode) > SwitchDateTimeInterval)
+	if ((curMillis - lastMillisSwitchMode) > SwitchDateTimeInterval || (curMillis - lastMillisSwitchMode) < 0)
 	{
 		lastMillisSwitchMode = curMillis;
 		switch (ClockState) {
@@ -484,5 +583,30 @@ void loop() {
 			break;
 		}
 		ClockState = MODE_PCP;
+	}
+	if (((curMillis - lastMillisUpdatedESP) > ESPUpdateInterval || (curMillis - lastMillisUpdatedESP) < 0) && !MaxTriesHit)
+	{
+		lastMillisUpdatedESP = curMillis;
+		if (!ConnectedESP)
+		{
+			CurrentProcessingCommand = IS_ESP_CONNECTED;
+		}
+		else if (!DateUpdated)
+		{
+			CurrentProcessingCommand = GET_DATE;
+		}
+		else if (!TimeUpdated) 
+		{
+			CurrentProcessingCommand = GET_TIME;
+		}
+		else
+		{
+			CurrentProcessingCommand = IS_DATA_UPDATE_AVAIABLE;
+		}
+		#ifdef DebugMode
+		Serial.println("Checking if the ESP has an update available");
+		#endif
+		CurrentClockState = ClockState;
+		ClockState = MODE_UPDATE_ESPDATA;
 	}
 }

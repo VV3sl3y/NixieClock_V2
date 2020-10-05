@@ -6,14 +6,11 @@
 //pre-defined commands
 #define IS_ESP_CONNECTED "isConnectedESP"
 #define GET_RSSI "GetSignalStrength"
-#define GET_TIME "GetTime"
 #define GET_DATE "GetDate"
-#define GET_EPOCH "GetEpoch"
+#define GET_TIME "GetTime"
+#define IS_DATA_UPDATE_AVAIABLE "GetUpdateAvailable"
+#define NO_DATA_RETURNED "NoDataAvailable"
 
 bool initESP();
-bool checkConnectionESP();
-String getEthernetTime();
-String getEthernetDate();
-String getEthernetEpoch();
-int getSignalStrenght();
-String receiveDataESP(String);
+bool sendDataESP(String);
+String receiveDataESP();

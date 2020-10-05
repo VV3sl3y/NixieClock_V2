@@ -1,0 +1,73 @@
+bool checkConnectionESP()
+{
+  #ifdef DebugMode
+	if (DebugMode >= 3) {
+		Serial.println("now executing checkConnectionESP() ");
+	}
+	#endif
+	String cmdResponse = sendDataESP(IS_ESP_CONNECTED);
+	if (cmdResponse == ESP_CONNECTED)
+	{
+		return true;
+	}
+	return false;
+}
+
+String getEthernetTime()
+{
+  #ifdef DebugMode
+	if (DebugMode >= 3) {
+		Serial.println("now executing getEthernetTime() ");
+	}
+	#endif
+	if (sendDataESP(GET_TIME)) {
+		String tmpMessage = receiveDataESP();
+
+		if (tmpMessage == "" || tmpMessage ==  "Max tries hit!")
+		{
+			return "23:34:56";
+		}
+		else
+		{
+			return tmpMessage;
+		}
+	}
+}
+
+String getEthernetDate()
+{
+  #ifdef DebugMode
+	if (DebugMode >= 3) {
+		Serial.println("now executing getEthernetDate() ");
+	}
+	#endif
+	if (sendDataESP(GET_DATE)) {
+		String tmpMessage = receiveDataESP();
+
+		if (tmpMessage == "" || tmpMessage ==  "Max tries hit!")
+		{
+			return "02-10-20";
+		}
+		else
+		{
+			return tmpMessage;
+		}
+	}
+}
+
+int getSignalStrenght()
+{
+  #ifdef DebugMode
+	if (DebugMode >= 3) {
+		Serial.println("now executing getSignalStrenght() ");
+	}
+	#endif
+	if (sendDataESP(GET_RSSI))
+	{
+
+	}
+	else
+	{
+
+	}
+}

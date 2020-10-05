@@ -15,6 +15,7 @@
 #define DisplayTimeUpdateInterval 100 //refresh time to request current time
 #define DisplayDateUpdateInterval 900 //refresh time to request current date
 #define SwitchDateTimeInterval 300000 //interval between switch time <-> date
+#define ESPUpdateInterval 5000 //interval between checking if ESP has updates available
 
 //Tweakable settings for on/off time for each nixie for refresh vs brightness & eliminate ghosting
 #define NIXIE_OFF_TIME 100
@@ -30,3 +31,7 @@
 #define AnimationPCP  1 //selected animation
 #define cyclePCP 20     //number of cycles to do
 #define PCP_INTERVAL 50 //interval between switching numbers
+
+#define ESP_ReadTimeOut 5
+#define Max_ESPConnection_Retries 5
+#define Max_ESPCommand_Retries 3

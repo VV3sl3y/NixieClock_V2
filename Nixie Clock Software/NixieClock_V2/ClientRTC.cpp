@@ -2,7 +2,7 @@
 #include "ClientRTC.h"
 
 const char* delim = " :";
-char s[128];  // for sprintf
+char s[128];   // for sprintf
 
 RTClock rtclock (RTCSEL_LSE); // initialise
 time_t tt, tt1;
@@ -19,7 +19,6 @@ uint8_t str2month(const char * d)
 	while ((--i) && strcmp(months[i], d) != 0) ;
 	return i;
 }
-//-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------

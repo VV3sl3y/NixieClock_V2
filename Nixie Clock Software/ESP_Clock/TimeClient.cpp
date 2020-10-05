@@ -53,7 +53,6 @@ void TimeClient::updateTime() {
       localtime_r(&now, &timeinfo);
       delay(10);
     } while (((millis() - start) <= (1000 * 60)) && (timeinfo.tm_year < (2016 - 1900)));
-    //if (timeinfo.tm_year <= (2016 - 1900))  // the NTP call was not successful
   
   Serial.println(getFormattedTime());
   Serial.println(getFormattedDate());
@@ -94,7 +93,7 @@ String TimeClient::getAmPmFormattedTime() {
 }
 
 String TimeClient::getFormattedDate(){
-  return CheckLeadingZero(timeinfo.tm_mday) + "-" + CheckLeadingZero(timeinfo.tm_mon) + "-" + CheckLeadingZero(timeinfo.tm_year);
+  return CheckLeadingZero(timeinfo.tm_mday) + "-" + CheckLeadingZero(timeinfo.tm_mon + 1) + "-" + CheckLeadingZero(timeinfo.tm_year - 100);
 }
 
 String TimeClient::CheckLeadingZero(int TimeDate) {

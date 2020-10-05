@@ -131,10 +131,6 @@ void setup() {
       Serial.println("Web Interface is Disabled");
     }
 
-    
-    //if you get here you have connected to the WiFi
-    //Serial.println("connected...yeey :)");
-
     getUpdateTime();
 }
 
@@ -226,7 +222,7 @@ void getUpdateTime() {
   //Update the Time
   timeClient.updateTime();
   #ifdef DebugMode
-  Serial.print("Local time: " + timeClient.getAmPmFormattedTime());
+  Serial.print("Local time: " + timeClient.getFormattedTime());
   #endif
 
   digitalWrite(externalLight, HIGH);  // turn off the LED
