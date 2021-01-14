@@ -1,4 +1,7 @@
+#pragma once
+
 #include <EEPROM.h>
+
 /*
    Debugmode: If needed, this makes sure feedback is received via Serial
    mode 1: Minimalistic: (Check functionallity) Just the basic returns like time, date connection
@@ -6,10 +9,15 @@
    mode 3: Full: (Dive deep) returns all possible states and information during the programm in case mode 2 seems fine
 */
 #define DebugMode 3
+#define DebugBAUDRate 115200
 
 #define NumberOfNixies 6
 
-#define BRIGHTNESS  32
+#define BRIGHTNESS		32
+#define LED_COLOR_R		0
+#define LED_COLOR_G		230
+#define LED_COLOR_B		255
+#define LED_ANIMATION	 
 
 //Times are in milliseconds
 #define DisplayTimeUpdateInterval 100 //refresh time to request current time
@@ -32,6 +40,7 @@
 #define cyclePCP 20     //number of cycles to do
 #define PCP_INTERVAL 50 //interval between switching numbers
 
+#define ESP_BAUDRate 57600
 #define ESP_ReadTimeOut 5
 #define Max_ESPConnection_Retries 5
 #define Max_ESPCommand_Retries 3

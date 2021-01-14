@@ -1,5 +1,4 @@
 #include "DriveNixies.h"
-#include "Pinout.h"
 
 //in this function there are all possible pin combos defined, but in reality we'll only use 0 - 9
 void SetNixieDriverVal(int i) {
@@ -126,22 +125,22 @@ void SetNixieDriverVal(int i) {
 
 void SetNixieTube(int n) {
 	switch (n) {
-	case 5:
+	case HOURS_MSB:
 		digitalWrite(N_Hour2, HIGH);
 		break;
-	case 4:
+	case HOURS_LSB:
 		digitalWrite(N_Hour1, HIGH);
 		break;
-	case 3:
+	case MINUTES_MSB:
 		digitalWrite(N_Minute2, HIGH);
 		break;
-	case 2:
+	case MINUTES_LSB:
 		digitalWrite(N_Minute1, HIGH);
 		break;
-	case 1:
+	case SECONDS_MSB:
 		digitalWrite(N_Second2, HIGH);
 		break;
-	case 0:
+	case SECONDS_LSB:
 		digitalWrite(N_Second1, HIGH);
 		break;
 	default:

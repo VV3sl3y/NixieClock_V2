@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Arduino.h>
 
 bool initPins();
@@ -16,7 +18,7 @@ bool initPins();
 
 #define Buzzer PA7 //Buzzer pin
 
-#define HVON PA8 //optional solder pad
+#define HVON PA8 //optional switch for the HV: selectable via solder pad
 
 //#define ProgRX PA9 //reserved for programming
 //#define ProgRX PA10 //reserved for programming
