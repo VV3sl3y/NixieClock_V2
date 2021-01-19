@@ -8,11 +8,16 @@
    mode 2: Intermediate: (Check for errors) Debugging purposes when the clock does not work
    mode 3: Full: (Dive deep) returns all possible states and information during the programm in case mode 2 seems fine
 */
-#define DebugMode 3
+#define DebugMode
 #define DebugBAUDRate 115200
 
 #define NumberOfNixies 6
 
+//NixieLighting settings
+#define LED_PIN     LED_Data
+#define NUM_LEDS    NumberOfNixies
+#define LED_TYPE    WS2812B
+#define LED_ORDER   GRB
 #define BRIGHTNESS		32
 #define LED_COLOR_R		0
 #define LED_COLOR_G		230

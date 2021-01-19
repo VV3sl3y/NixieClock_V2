@@ -1,4 +1,7 @@
 #include "CommsESP.h"
+#include "Settings.h"
+#include "Pinout.h"
+#include "SoftSerialSTM32.h"
 
 SoftSerialSTM32 SWSerialESP(RX_ESP, TX_ESP); //mcuTX, mcuRX
 
@@ -24,11 +27,9 @@ bool initESP()
 
 bool sendDataESP(String command)
 {
-#ifdef DebugMode
-	if (DebugMode >= 3) {
-		Serial.println("now executing sendDataESP() ");
-	}
-#endif
+	#ifdef DebugMode
+	Serial.println("now executing sendDataESP() ");
+	#endif
 	SWSerialESP.listen();
 	delayMicroseconds(50);
 	SWSerialESP.flush();
@@ -41,10 +42,8 @@ bool sendDataESP(String command)
 
 String receiveDataESP()
 {
-  #ifdef DebugMode
-	if (DebugMode >= 3) {
-		Serial.println("now executing receiveDataESP() ");
-	}
+	#ifdef DebugMode
+	Serial.println("now executing receiveDataESP() ");
 	#endif
 	String tmpMessage = "";
 	
@@ -54,9 +53,7 @@ String receiveDataESP()
 	{
 		tmpMessage = SWSerialESP.readStringUntil(';');
 		#ifdef DebugMode
-		if (DebugMode >= 2) {
-			Serial.println("Following message received from ESP: " + tmpMessage);
-		}
+		Serial.println("Following message received from ESP: " + tmpMessage);
 		#endif
 	}
 	else

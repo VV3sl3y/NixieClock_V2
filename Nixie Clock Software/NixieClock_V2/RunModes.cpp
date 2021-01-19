@@ -1,10 +1,31 @@
-#include  "RunModes.h"
+#include <Arduino.h>
+
+#include "CommsESP.h"
+#include "DriveNixies.h"
+#include "NixieLighting.h"
+#include "Pinout.h"
+#include "RunModes.h"
+#include "Settings.h"
+#include "TimeClient.h"
+
+#include <Time.h>
+#include <TimeLib.h>
 
 bool initRunmodes()
 {
+	lastMillisCheckedRTC = 0;
+	lastMillisPCP = 0;
+	lastMillisSwitchMode = 0;
+	lastMillisConnectionESP = 0;
+	lastMillisUpdatedESP = 0;
+	curMillis = 0;
+	
+	cycleCurrent = 0;
+	FadeInNewMode = 0;
+	
 	NewClockState = MODE_TIME;
 	CurrentClockState = MODE_TIME;
-		return true;
+	return true;
 }
 
 void RunDebugMode() {
@@ -34,12 +55,9 @@ void RunTimeMode() {
 
 		lastMillisCheckedRTC = curMillis;
 
-#ifdef DebugMode
-		if (DebugMode >= 2)
-		{
-			Serial.println("curmillis:" + String(curMillis) + "   oldMillisTimeCheckedRTC:" + String(lastMillisCheckedRTC));
-		}
-#endif
+		#ifdef DebugMode
+		Serial.println("curmillis:" + String(curMillis) + "   oldMillisTimeCheckedRTC:" + String(lastMillisCheckedRTC));
+		#endif
 
 		if ((timeVar[0] % 2) == 1)
 		{
@@ -70,12 +88,9 @@ void RunDateMode() {
 		updateDateVar();
 
 		lastMillisCheckedRTC = curMillis;
-#ifdef DebugMode
-		if (DebugMode >= 2)
-		{
-			Serial.println("curmillis:" + String(curMillis) + "   oldMillisDateRTC:" + String(lastMillisCheckedRTC));
-		}
-#endif
+		#ifdef DebugMode
+		Serial.println("curmillis:" + String(curMillis) + "   oldMillisDateRTC:" + String(lastMillisCheckedRTC));
+		#endif
 	}
 
 	digitalWrite(HVON, HIGH);
@@ -91,48 +106,59 @@ void RunDateMode() {
 	SwitchDot(DOT_ON);
 }
 
-void RunPreventionCathodePoisoning(CLOCK_MODE State) {
+void RunPreventionCathodePoisoning(CLOCK_MODE NewState) {
 	curMillis = millis();
 	if ((curMillis - lastMillisPCP) > PCP_INTERVAL || curMillis < 0) {
 		lastMillisPCP = millis();
-		if (State == MODE_TIME) {
+		switch (NewState)
+		{
+		case MODE_TIME:
 			updateTimeVar();
 			for (int i = 0; i < FadeInNewMode; i++) {
 				cathodeVar[i] = timeVar[i];
 			}
-		}
-		else if (State == MODE_DATE) {
+			break;
+		case MODE_DATE:
 			updateDateVar();
 			for (int i = 0; i < FadeInNewMode; i++) {
 				cathodeVar[i] = dateVar[i];
 			}
+			break;
+			
+		default:
+			break;
 		}
-    
-		if (AnimationPCP == 1) {
+		
+		switch (AnimationPCP)
+		{
+		case 1:
 			for (int i = FadeInNewMode; i < NumberOfNixies; i++) {
 				cathodeVar[i] = cathodeVar[i] + 1;
 				if (cathodeVar[i] > 9) {
 					cathodeVar[i] = 0;
 				}
 			}
-		}
-		else if (AnimationPCP == 2) {
+			break;
+		case 2:
 			for (int i = FadeInNewMode; i < NumberOfNixies; i++) {
 				cathodeVar[i] = cathodeVar[i] - 1;
 				if (cathodeVar[i] < 0) {
 					cathodeVar[i] = 9;
 				}
 			}
-		}
+			break;
 
-		else if (AnimationPCP == 3) {
+		case 3:
 			for (int i = FadeInNewMode; i < NumberOfNixies; i++) {
 				cathodeVar[i] = random(10);
 			}
-		}
-
-		else {
+			break;
+			
+		default:
+			#ifdef DebugMode
 			Serial.println("Error while animating, set animation: " + AnimationPCP);
+			#endif
+			break;
 		}
 
 		if (cycleCurrent < cyclePCP) {
@@ -144,17 +170,16 @@ void RunPreventionCathodePoisoning(CLOCK_MODE State) {
 		}
 		else
 		{
+			#ifdef DebugMode
 			Serial.println("entering new afterpcp state: " + String(ClockState));
+			#endif
 			cycleCurrent = 0;
 			FadeInNewMode = 0;
 			ClockState = NewClockState;
 		}
-#ifdef DebugMode
-		if (DebugMode >= 2)
-		{
+			#ifdef DebugMode
 			Serial.println("curmillis:" + String(curMillis) + "   oldMillisPCP:" + String(lastMillisPCP));
-		}
-#endif
+			#endif
 	}
   
 	digitalWrite(HVON, HIGH);
@@ -240,38 +265,21 @@ void RunUpdateESPMode()
 
 void RunUpdateMode()
 {
-#ifdef DebugMode
-	if (DebugMode >= 1)
-	{
+		#ifdef DebugMode
 		Serial.println("New ethernet time: " + currentTimeESP);
 		Serial.println("New ethernet date: " + currentDateESP);
+		#endif
 		if (currentDateESP != "" && currentTimeESP != "") {
+			#ifdef DebugMode
 			Serial.println("Setting time!");
+			#endif
 			time_t newTime = stringToTime(currentDateESP, currentTimeESP);
 			setNewTimeRTC(newTime);  //compensation for reading serial
-		}
 	}
-#endif
-
-	char tmpTime[8];
-	currentTimeESP.toCharArray(tmpTime, 8);
-
-	timeVar[0] = (int)tmpTime[7] - 48;
-	timeVar[1] = (int)tmpTime[6] - 48;
-	timeVar[2] = (int)tmpTime[4] - 48;
-	timeVar[3] = (int)tmpTime[3] - 48;
-	timeVar[4] = (int)tmpTime[1] - 48;
-	timeVar[5] = (int)tmpTime[0] - 48;
-
-	char tmpDate[8];
-	currentTimeESP.toCharArray(tmpDate, 8);
-
-	dateVar[0] = (int)tmpDate[7] - 48;
-	dateVar[1] = (int)tmpDate[6] - 48;
-	dateVar[2] = (int)tmpDate[4] - 48;
-	dateVar[3] = (int)tmpDate[3] - 48;
-	dateVar[4] = (int)tmpDate[1] - 48;
-	dateVar[5] = (int)tmpDate[0] - 48;
+	if (updateTimeVar() && updateDateVar())
+	{
+		//success
+	}
 }
 
 void RunErrorMode() {

@@ -2,22 +2,6 @@
 
 #include <Arduino.h>
 
-#include "Settings.h"
-
-#include <Time.h>
-#include <TimeLib.h>
-#include <RTClock.h>
-
-long lastMillisCheckedRTC;
-long lastMillisPCP;
-long lastMillisSwitchMode;
-long lastMillisConnectionESP;
-long lastMillisUpdatedESP;
-long curMillis;
-
-int cycleCurrent;
-int FadeInNewMode;
-
 int timeVar[6];
 int dateVar[6];
 int cathodeVar[NumberOfNixies];

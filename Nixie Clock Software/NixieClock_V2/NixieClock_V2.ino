@@ -37,7 +37,7 @@
 		definities van de standaard waarden voor de klok
 		EEPROM afhandeling (lezen & schrijven)
 
-	TimeClient
+	TimeClient NOTE: offset from time RTC to realtime ~ 37 seconds
 		opstart tijd
 		RTC handling
 		alarm handling
@@ -77,4 +77,8 @@ TODO Lijst:
 	- Maak een update available voor esp vs stm
 
 	- Voor de ESP commando's(aanpassen settings), vlag toevoegen welke bijhoud of er een commando bezig is om de tijdsweergave zo min mogelijk te beinvloeden
+	
+	- ESP baud speed hoger proberen dan dat deze nu staat
+	
+	- voor speedup de digitalreadwrite omzetten naar DigitalReadWriteFast voor definitieve versie software de digitalreadwrite omzetten naar portmodulatie
 */

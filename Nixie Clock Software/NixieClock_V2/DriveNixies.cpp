@@ -1,4 +1,7 @@
+#include <Arduino.h>
+
 #include "DriveNixies.h"
+#include "Pinout.h"
 
 //in this function there are all possible pin combos defined, but in reality we'll only use 0 - 9
 void SetNixieDriverVal(int i) {

@@ -1,9 +1,5 @@
 #pragma once
 
-#include <Arduino.h>
-
-#include "Pinout.h"
-
 //nixie dot modes
 enum dotModes {
 	DOT_SWITCH = 0, // switching the dots on/off at 1Hz

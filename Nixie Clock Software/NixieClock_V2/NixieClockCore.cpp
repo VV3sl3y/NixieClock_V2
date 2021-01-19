@@ -1,4 +1,10 @@
+#include "CommsESP.h"
 #include "NixieClockCore.h"
+#include "NixieLighting.h"
+#include "Pinout.h"
+#include "RunModes.h"
+#include "Settings.h"
+#include "TimeClient.h"
 
 //--------------Main Program Setup()--------------//
 // This is the setup of the NixieClock Firmware
@@ -8,87 +14,71 @@ void setup() {
 	afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);
   
 	//Start Serial communication
-#ifdef DebugMode
-	if(DebugMode > 0)
-	{
-		Serial.begin(DebugBAUDRate);
-	}
-#endif
+	#ifdef DebugMode
+	Serial.begin(DebugBAUDRate);
+	#endif
 	
-
+	#pragma region InitClasses
 	if (initRunmodes()) 
 	{
-		if (DebugMode >= 2)
-		{
-			Serial.println("Runmodes initialized");
-		}
-	} else {
-		if (DebugMode >= 2)
-		{
-			Serial.println("Failed to initialize Runmodes");
-		}
+		#ifdef DebugMode
+		Serial.println("Runmodes initialized");
+		#endif
+	} 
+	else 
+	{
+		#ifdef DebugMode
+		Serial.println("Failed to initialize Runmodes");
+		#endif
 	}
 	
 	//set pinmodes
 	if(initPins()) {
-		if (DebugMode >= 2)
-		{
-			Serial.println("Pins initialized");
-		}
+		#ifdef DebugMode
+		Serial.println("Pins initialized");
+		#endif
 	} else {
-		if (DebugMode >= 2)
-		{
-			Serial.println("Failed to initialize pins");
-		}
+		#ifdef DebugMode
+		Serial.println("Failed to initialize pins");
+		#endif
 	}
 
 	//initialize RTC
 	if(initTimeClient()) {
-		if (DebugMode >= 2)
-		{
-			Serial.println("RTC initialized");
-		}
+		#ifdef DebugMode
+		Serial.println("RTC initialized");
+		#endif
 	} else {
-		if (DebugMode >= 2)
-		{
-			Serial.println("Failed to initialize RTC");
-		}
+		#ifdef DebugMode
+		Serial.println("Failed to initialize RTC");
+		#endif
 	}
 
 	//initialize WS2811B
 	if(initLEDS()) {
 		setNeoColor(LED_COLOR_R, LED_COLOR_G, LED_COLOR_B);
 		setNeoBrightness(BRIGHTNESS);
-#ifdef DebugMode
-		if (DebugMode >= 2)
-		{
-			Serial.println("FastLED initialized");
-		}
-#endif
+		#ifdef DebugMode
+		Serial.println("FastLED initialized");
+		#endif
 	} else {
-#ifdef DebugMode
-		if (DebugMode >= 2)
-		{
-			Serial.println("Failed to initialize FastLED");
-		}
-#endif
+		#ifdef DebugMode
+		Serial.println("Failed to initialize FastLED");
+		#endif
 	}
 
 	//initialize ESP
    if(initESP()) {
-		if (DebugMode >= 2)
-		{
-			Serial.println("ESP connected");
-		}
+		#ifdef DebugMode
+		Serial.println("ESP connected");
+		#endif
 	} else {
-#ifdef DebugMode
-		if (DebugMode >= 2)
-		{
-			Serial.println("ESP connection failed");
-		}
-#endif
+		#ifdef DebugMode
+		Serial.println("ESP connection failed");
+		#endif
 	}
-
+	#pragma endregion
+	
 	ClockState = MODE_TIME;
 	ESP_State = ESP_FREE;
 }
@@ -98,7 +88,8 @@ void setup() {
 // Once called this will loop forever
 void loop() {
   
-	switch (ClockState) {
+	switch (ClockState)
+	{
 	case MODE_DEBUG:
 		RunDebugMode();
 		ClockState = MODE_TIME;
@@ -117,13 +108,13 @@ void loop() {
 		break;
 
 	case MODE_UPDATE_TIME:
-#ifdef DebugMode
+		#ifdef DebugMode
 		Serial.println("running time update");
-#endif
+		#endif
 		RunUpdateMode();
-#ifdef DebugMode
+		#ifdef DebugMode
 		Serial.println("Entering clock mode");
-#endif
+		#endif
 		ClockState = MODE_TIME;
 		break;
 		
@@ -146,21 +137,23 @@ void loop() {
 		lastMillisSwitchMode = curMillis;
 		switch (ClockState) {
 		case MODE_TIME:
-#ifdef DebugMode
+			#ifdef DebugMode
 			Serial.println("PCP to Date");
-#endif
+			#endif
 			NewClockState = MODE_DATE;
 			break;
 
 		case MODE_DATE:
-#ifdef DebugMode
+			#ifdef DebugMode
 			Serial.println("PCP to Time");
-#endif
+			#endif
 			NewClockState = MODE_TIME;
 			break;
 
 		default:
+			#ifdef DebugMode
 			Serial.println("Error while switching, current state: " + String(ClockState));
+			#endif
 			break;
 		}
 		ClockState = MODE_PCP;
@@ -184,9 +177,9 @@ void loop() {
 		{
 			CurrentProcessingCommand = IS_DATA_UPDATE_AVAIABLE;
 		}
-#ifdef DebugMode
+		#ifdef DebugMode
 		Serial.println("Checking if the ESP has an update available");
-#endif
+		#endif
 		CurrentClockState = ClockState;
 		ClockState = MODE_UPDATE_ESPDATA;
 	}

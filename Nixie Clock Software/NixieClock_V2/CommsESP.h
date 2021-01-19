@@ -2,10 +2,6 @@
 
 #include <Arduino.h>
 
-#include "Settings.h"
-#include "Pinout.h"
-#include "SoftSerialSTM32.h"
-
 //pre-defined responses
 const String ESP_CONNECTED =  "ESPConnected";
 

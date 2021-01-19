@@ -1,4 +1,10 @@
+#include <Arduino.h>
+
 #include "NixieLighting.h"
+#include "Settings.h"
+#include "Pinout.h"
+
+#include <FastLED.h>
 
 CRGB leds[NUM_LEDS];
 

@@ -1,4 +1,10 @@
+#include "Settings.h"
 #include "TimeClient.h"
+
+#include <Time.h>
+#include <TimeLib.h>
+#include <RTClock.h>
+
 
 const char* delim = " :";
 char s[128];   // for sprintf
@@ -71,16 +77,6 @@ bool initTimeClient()
 	rtclock.attachAlarmInterrupt(blink); // Call blink
 	rtclock.attachSecondsInterrupt(SecondCount); // Call SecondCount
   
-	lastMillisCheckedRTC = 0;
-	lastMillisPCP = 0;
-	lastMillisSwitchMode = 0;
-	lastMillisConnectionESP = 0;
-	lastMillisUpdatedESP = 0;
-	curMillis = 0;
-	
-	cycleCurrent = 0;
-	FadeInNewMode = 0;
-	
 	for (int i = 0; i < 6; i++) {
 		timeVar[i] = 0;
 	}
@@ -104,12 +100,9 @@ bool initTimeClient()
 String getCurrentTime()
 {
 	String curTime = "";
-	// Get time
 	rtclock.breakTime(rtclock.now(), mtt);
 	curTime += print2digits(mtt.hour);
-	//curTime += ":";
 	curTime += print2digits(mtt.minute);
-	//curTime += ":";
 	curTime += print2digits(mtt.second);
 
 	return curTime;
@@ -118,12 +111,9 @@ String getCurrentTime()
 String getCurrentDate()
 {
 	String curDate = "";
-	// Get date
 	rtclock.breakTime(rtclock.now(), mtt);
 	curDate += print2digits(mtt.day);
-	//curTime += "-";
 	curDate += print2digits(mtt.month);
-	//curTime += "-";
 	curDate += print2digits(mtt.year - 30);  //timenotation +1970 for current year, -2000 for propper show on nixies (last 2 digits)
 
 	return curDate;
@@ -139,10 +129,12 @@ String print2digits(int number) {
 }
 
 void setNewTimeRTC(time_t newTime) {
-	//if(tt > mt)//check if new set time is larger then ParseBuildTime
+	//if(newTime > mt)//check if new set time is larger then ParseBuildTime
 	//{
+	#ifdef DebugMode
 	Serial.print("Trying to set new time: ");
 	Serial.println(newTime);
+	#endif
 	rtclock.setTime(newTime);
 	//}
 }
@@ -167,7 +159,9 @@ String getCurrentDateTime() {
 			mtt.hour,
 			mtt.minute,
 			mtt.second);
+		#ifdef DebugMode
 		Serial.print(s);
+		#endif
 	}
 	return s;
 }
@@ -179,12 +173,9 @@ String getCurrentDateTime() {
 
 bool updateTimeVar() {
 	String newTime = getCurrentTime();
-#ifdef DebugMode
-	if (DebugMode >= 1)
-	{
-		Serial.println("current time: " + newTime);
-	}
-#endif
+	#ifdef DebugMode
+	Serial.println("current time: " + newTime);
+	#endif
 	char tmpTime[6];
 	newTime.toCharArray(tmpTime, 7);
 
@@ -200,12 +191,9 @@ bool updateTimeVar() {
 
 bool updateDateVar() {
 	String newDate = getCurrentDate();
-#ifdef DebugMode
-	if (DebugMode >= 1)
-	{
-		Serial.println("current Date: " + newDate);
-	}
-#endif
+	#ifdef DebugMode
+	Serial.println("current Date: " + newDate);
+	#endif
 
 	char tmpDate[6];
 	newDate.toCharArray(tmpDate, 7);

@@ -1,16 +1,14 @@
 #pragma once
 
-#include <Arduino.h>
+long lastMillisCheckedRTC;
+long lastMillisPCP;
+long lastMillisSwitchMode;
+long lastMillisConnectionESP;
+long lastMillisUpdatedESP;
+long curMillis;
 
-#include "CommsESP.h"
-#include "DriveNixies.h"
-#include "NixieLighting.h"
-#include "Pinout.h"
-#include "Settings.h"
-#include "TimeClient.h"
-
-#include <Time.h>
-#include <TimeLib.h>
+int cycleCurrent;
+int FadeInNewMode;
 
 enum CLOCK_MODE
 {
@@ -21,23 +19,26 @@ enum CLOCK_MODE
 	MODE_UPDATE_TIME,
 	MODE_UPDATE_ESPDATA,
 	MODE_ERROR
-} ClockState;
+};
+
+CLOCK_MODE ClockState;
+CLOCK_MODE NewClockState;
+CLOCK_MODE CurrentClockState;
 
 enum ESP_Mode
 {
 	ESP_FREE,
 	ESP_AWAITING_ANSWER,
 	ESP_COMMAND_REDO
-} ESP_State;
+};
 
-CLOCK_MODE NewClockState;
-CLOCK_MODE CurrentClockState;
+ESP_Mode ESP_State;
 
 bool initRunmodes();
 void RunDebugMode();
 void RunTimeMode();
 void RunDateMode();
-void RunPreventionCathodePoisoning(CLOCK_MODE State);
+void RunPreventionCathodePoisoning(CLOCK_MODE);
 void RunUpdateESPMode();
 void RunUpdateMode();
 void RunErrorMode();
