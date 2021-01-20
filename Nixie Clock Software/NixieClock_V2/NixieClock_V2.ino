@@ -12,12 +12,11 @@
 
 /*
 	Nieuwe indeling files:
-	CommsESP
-		communicatie met ESP
-		flags zetten voor programma update
-	
 	DriveNixies
 		afhandeling nixie states (cijfers & dots)
+	
+	ESPHandler
+		communicatie met ESP
 	
 	NixieClockCore
 		Soort van Threading control waar d.m.v. millis updates worden uitgevoerd om de klok "lagvrij" te laten lopen
@@ -32,12 +31,11 @@
 	Runmodes
 		clock modes waar de klok mee bezig is en wat die moet doen
 	
-		
 	settings
 		definities van de standaard waarden voor de klok
 		EEPROM afhandeling (lezen & schrijven)
 
-	TimeClient NOTE: offset from time RTC to realtime ~ 37 seconds
+	TimeClient NOTE: offset from time RTC to realtime ~ 37 seconds, evt curmillis bij de ESP bij programmeren om dit te fixen
 		opstart tijd
 		RTC handling
 		alarm handling
