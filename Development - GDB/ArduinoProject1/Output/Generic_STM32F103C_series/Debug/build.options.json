@@ -1,0 +1,11 @@
+{
+  "additionalFiles": "..,..,..,..,..,..,..,..,..,..,..,..,..,..,..",
+  "builtInLibrariesFolders": "",
+  "builtInToolsFolders": "C:\\Users\\Moh\\AppData\\Local/Arduino15/packages",
+  "customBuildProperties": "runtime.tools.stm32tools.path=C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages\\stm32duino\\tools\\stm32tools\\2020.12.14,runtime.tools.ctags.path=C:\\Users\\Moh\\AppData\\Local\\VisualGDB\\Arduino\\tools-builder\\ctags\\5.8-arduino11",
+  "fqbn": "stm32duino:STM32F1:genericSTM32F103C:device_variant=STM32F103CB,upload_method=serialMethod,cpu_speed=speed_72mhz,opt=osstd",
+  "hardwareFolders": "C:\\Users\\Moh\\Documents\\Arduino\\hardware,C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages",
+  "otherLibrariesFolders": "C:\\Users\\Moh\\Documents\\Arduino\\Libraries",
+  "runtime.ide.version": "10600",
+  "sketchLocation": "P:\\VS_Sources\\GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
+}
