@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-#include "CommsESP.h"
 #include "DriveNixies.h"
+#include "ESPHandler.h"
 #include "NixieLighting.h"
 #include "Pinout.h"
 #include "RunModes.h"
@@ -23,8 +23,11 @@ bool initRunmodes()
 	cycleCurrent = 0;
 	FadeInNewMode = 0;
 	
+	ClockState = MODE_TIME;
 	NewClockState = MODE_TIME;
 	CurrentClockState = MODE_TIME;
+	
+	ESP_State = ESP_FREE;
 	return true;
 }
 
@@ -114,12 +117,26 @@ void RunPreventionCathodePoisoning(CLOCK_MODE NewState) {
 		{
 		case MODE_TIME:
 			updateTimeVar();
+			
+			if ((timeVar[0] % 2) == 1)
+			{
+				SwitchDot(DOT_ON);
+			}
+			else
+			{
+				SwitchDot(DOT_OFF);
+			}
+			
 			for (int i = 0; i < FadeInNewMode; i++) {
 				cathodeVar[i] = timeVar[i];
 			}
 			break;
+			
 		case MODE_DATE:
 			updateDateVar();
+			
+			SwitchDot(DOT_ON);
+			
 			for (int i = 0; i < FadeInNewMode; i++) {
 				cathodeVar[i] = dateVar[i];
 			}
@@ -198,6 +215,8 @@ void RunUpdateESPMode()
 {
 	String CommandResult = "";
 	
+	NixiesOff(); // temporary test to have less flickering when asking data from ESP
+	
 	switch (ESP_State)
 	{
 	case ESP_FREE:
@@ -245,7 +264,7 @@ void RunUpdateESPMode()
 			
 		}
 		else {
-			//laatste slimigheierrord inbouwen afhandeling commandos
+			//laatste slimigheid/errors inbouwen afhandeling commandos
 		}
 		ESP_State = ESP_FREE;  //temp dummy to get through the code
 		break;
@@ -261,20 +280,61 @@ void RunUpdateESPMode()
 		setNewTimeRTC(stringToTime(currentDateESP, currentTimeESP));
 		RTCUpdated = true;
 	}
+	ClockState = CurrentClockState;
 }
 
-void RunUpdateMode()
+void RunModeUpdate()
 {
-		#ifdef DebugMode
-		Serial.println("New ethernet time: " + currentTimeESP);
-		Serial.println("New ethernet date: " + currentDateESP);
-		#endif
-		if (currentDateESP != "" && currentTimeESP != "") {
+	if ((curMillis - lastMillisSwitchMode) > SwitchDateTimeInterval || (curMillis - lastMillisSwitchMode) < 0)
+	{
+		lastMillisSwitchMode = curMillis;
+		switch (ClockState) {
+		case MODE_TIME:
 			#ifdef DebugMode
-			Serial.println("Setting time!");
+			Serial.println("PCP to Date");
 			#endif
-			time_t newTime = stringToTime(currentDateESP, currentTimeESP);
-			setNewTimeRTC(newTime);  //compensation for reading serial
+			NewClockState = MODE_DATE;
+			break;
+
+		case MODE_DATE:
+			#ifdef DebugMode
+			Serial.println("PCP to Time");
+			#endif
+			NewClockState = MODE_TIME;
+			break;
+
+		default:
+			#ifdef DebugMode
+			Serial.println("Error while switching, current state: " + String(ClockState));
+			#endif
+			break;
+		}
+		ClockState = MODE_PCP;
+	}
+	if (((curMillis - lastMillisUpdatedESP) > ESPUpdateInterval || (curMillis - lastMillisUpdatedESP) < 0) && !MaxTriesHit)
+	{
+		lastMillisUpdatedESP = curMillis;
+		if (!ConnectedESP)
+		{
+			CurrentProcessingCommand = IS_ESP_CONNECTED;
+		}
+		else if (!DateUpdated)
+		{
+			CurrentProcessingCommand = GET_DATE;
+		}
+		else if (!TimeUpdated) 
+		{
+			CurrentProcessingCommand = GET_TIME;
+		}
+		else
+		{
+			CurrentProcessingCommand = IS_DATA_UPDATE_AVAIABLE;
+		}
+		#ifdef DebugMode
+		Serial.println("Checking if the ESP has an update available");
+		#endif
+		CurrentClockState = ClockState;
+		ClockState = MODE_UPDATE_ESPDATA;
 	}
 }
 

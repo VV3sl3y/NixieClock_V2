@@ -32,7 +32,7 @@
 ===info ||| Progress {0} ||| [110.94]
 ===info ||| Progress {0} ||| [111.33]
 ===info ||| Progress {0} ||| [111.72]
-===info ||| Progress {0} ||| [112.11]
+===info ||| Progress {0} ||| [109.38]
 ===info ||| Progress {0} ||| [112.50]
 ===info ||| Progress {0} ||| [115.62]
 ===info ||| Progress {0} ||| [118.75]

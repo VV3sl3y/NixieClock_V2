@@ -1,10 +1,11 @@
 #pragma once
 
 #include <Arduino.h>
+#include "Settings.h"
 
 int timeVar[6];
 int dateVar[6];
-int cathodeVar[NumberOfNixies];
+int cathodeVar[6];
 
 bool DateUpdated;
 bool TimeUpdated;

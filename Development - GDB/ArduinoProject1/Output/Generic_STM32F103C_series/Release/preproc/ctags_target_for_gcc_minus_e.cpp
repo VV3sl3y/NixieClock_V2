@@ -1,4 +1,4 @@
-# 1 "P:\\VS_Sources\\GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
+# 1 "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
 /*
 
 ----------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@
 -----------------------------------------------------------------------------------------------------------
 
 */
-# 13 "P:\\VS_Sources\\GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
+# 13 "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
 /*
 
 	Nieuwe indeling files:
@@ -82,7 +82,7 @@
 		verdere tijdafhandeling intern
 
 */
-# 45 "P:\\VS_Sources\\GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
+# 45 "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
 /*
 
 TODO Lijst:

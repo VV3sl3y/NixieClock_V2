@@ -23,8 +23,11 @@ bool initRunmodes()
 	cycleCurrent = 0;
 	FadeInNewMode = 0;
 	
+	ClockState = MODE_TIME;
 	NewClockState = MODE_TIME;
 	CurrentClockState = MODE_TIME;
+	
+	ESP_State = ESP_FREE;
 	return true;
 }
 
@@ -261,7 +264,7 @@ void RunUpdateESPMode()
 			
 		}
 		else {
-			//laatste slimigheierrord inbouwen afhandeling commandos
+			//laatste slimigheid/errors inbouwen afhandeling commandos
 		}
 		ESP_State = ESP_FREE;  //temp dummy to get through the code
 		break;
@@ -276,6 +279,62 @@ void RunUpdateESPMode()
 	if (!RTCUpdated && DateUpdated && TimeUpdated) {
 		setNewTimeRTC(stringToTime(currentDateESP, currentTimeESP));
 		RTCUpdated = true;
+	}
+	ClockState = CurrentClockState;
+}
+
+void RunModeUpdate()
+{
+	if ((curMillis - lastMillisSwitchMode) > SwitchDateTimeInterval || (curMillis - lastMillisSwitchMode) < 0)
+	{
+		lastMillisSwitchMode = curMillis;
+		switch (ClockState) {
+		case MODE_TIME:
+			#ifdef DebugMode
+			Serial.println("PCP to Date");
+			#endif
+			NewClockState = MODE_DATE;
+			break;
+
+		case MODE_DATE:
+			#ifdef DebugMode
+			Serial.println("PCP to Time");
+			#endif
+			NewClockState = MODE_TIME;
+			break;
+
+		default:
+			#ifdef DebugMode
+			Serial.println("Error while switching, current state: " + String(ClockState));
+			#endif
+			break;
+		}
+		ClockState = MODE_PCP;
+	}
+	if (((curMillis - lastMillisUpdatedESP) > ESPUpdateInterval || (curMillis - lastMillisUpdatedESP) < 0) && !MaxTriesHit)
+	{
+		lastMillisUpdatedESP = curMillis;
+		if (!ConnectedESP)
+		{
+			CurrentProcessingCommand = IS_ESP_CONNECTED;
+		}
+		else if (!DateUpdated)
+		{
+			CurrentProcessingCommand = GET_DATE;
+		}
+		else if (!TimeUpdated) 
+		{
+			CurrentProcessingCommand = GET_TIME;
+		}
+		else
+		{
+			CurrentProcessingCommand = IS_DATA_UPDATE_AVAIABLE;
+		}
+		#ifdef DebugMode
+		Serial.println("Checking if the ESP has an update available");
+		#endif
+		CurrentClockState = ClockState;
+		ClockState = MODE_UPDATE_ESPDATA;
 	}
 }
 

@@ -10,67 +10,67 @@
     "Includepath": "C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages\\stm32duino\\hardware\\STM32F1\\2020.12.14\\variants\\generic_stm32f103c"
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\NixieClock_V2.ino.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\NixieClock_V2.ino.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\CommsESP.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\DriveNixies.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\ESPHandler.cpp",
     "Include": "EEPROM.h",
     "Includepath": "C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages\\stm32duino\\hardware\\STM32F1\\2020.12.14\\libraries\\EEPROM"
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\CommsESP.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\ESPHandler.cpp",
     "Include": "SoftSerialSTM32.h",
     "Includepath": "C:\\Users\\Moh\\Documents\\Arduino\\Libraries\\SoftwareSerialSTM32"
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\CommsESP.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\ESPHandler.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\DriveNixies.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\NixieClockCore.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\NixieClockCore.cpp",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\NixieLighting.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\NixieLighting.cpp",
     "Include": "FastLED.h",
     "Includepath": "C:\\Users\\Moh\\Documents\\Arduino\\Libraries\\FastLED"
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\NixieLighting.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\NixieLighting.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\Pinout.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\Pinout.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\RunModes.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\RunModes.cpp",
     "Include": "TimeLib.h",
     "Includepath": "C:\\Users\\Moh\\Documents\\Arduino\\Libraries\\Time"
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\RunModes.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\RunModes.cpp",
     "Include": "",
     "Includepath": null
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\TimeClient.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\TimeClient.cpp",
     "Include": "RTClock.h",
     "Includepath": "C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages\\stm32duino\\hardware\\STM32F1\\2020.12.14\\libraries\\RTClock\\src"
   },
   {
-    "Sourcefile": "P:\\VS_Sources\\GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\TimeClient.cpp",
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\TimeClient.cpp",
     "Include": "",
     "Includepath": null
   },

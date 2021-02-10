@@ -1,4 +1,3 @@
-#include "Settings.h"
 #include "TimeClient.h"
 
 #include <Time.h>

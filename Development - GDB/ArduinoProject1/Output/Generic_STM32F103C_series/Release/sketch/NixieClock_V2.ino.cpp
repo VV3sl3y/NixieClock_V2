@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#line 1 "P:\\VS_Sources\\GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
+#line 1 "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
 /*
 ----------------------------------------------------------------------------------------------------------
  * Software written for the NixieClock V2 and probably V2.1 will be included here too

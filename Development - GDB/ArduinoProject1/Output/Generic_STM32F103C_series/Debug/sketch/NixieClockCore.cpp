@@ -1,4 +1,4 @@
-#include "CommsESP.h"
+#include "ESPHandler.h"
 #include "NixieClockCore.h"
 #include "NixieLighting.h"
 #include "Pinout.h"
@@ -18,7 +18,7 @@ void setup() {
 	Serial.begin(DebugBAUDRate);
 	#endif
 	
-
+	#pragma region InitClasses
 	if (initRunmodes()) 
 	{
 		#ifdef DebugMode
@@ -31,7 +31,6 @@ void setup() {
 		Serial.println("Failed to initialize Runmodes");
 		#endif
 	}
-	
 	
 	//set pinmodes
 	if(initPins()) {
@@ -78,9 +77,7 @@ void setup() {
 		Serial.println("ESP connection failed");
 		#endif
 	}
-
-	ClockState = MODE_TIME;
-	ESP_State = ESP_FREE;
+	#pragma endregion
 }
 
 //--------------Main Program Loop()--------------//
@@ -106,21 +103,9 @@ void loop() {
 	case MODE_PCP:
 		RunPreventionCathodePoisoning(NewClockState);
 		break;
-
-	case MODE_UPDATE_TIME:
-		#ifdef DebugMode
-		Serial.println("running time update");
-		#endif
-		RunUpdateMode();
-		#ifdef DebugMode
-		Serial.println("Entering clock mode");
-		#endif
-		ClockState = MODE_TIME;
-		break;
 		
 	case MODE_UPDATE_ESPDATA:
 		RunUpdateESPMode();
-		ClockState = CurrentClockState;
 		break;
 
 	case MODE_ERROR:
@@ -131,56 +116,5 @@ void loop() {
 		break;
 	}
   
-	curMillis = millis();
-	if ((curMillis - lastMillisSwitchMode) > SwitchDateTimeInterval || (curMillis - lastMillisSwitchMode) < 0)
-	{
-		lastMillisSwitchMode = curMillis;
-		switch (ClockState) {
-		case MODE_TIME:
-			#ifdef DebugMode
-			Serial.println("PCP to Date");
-			#endif
-			NewClockState = MODE_DATE;
-			break;
-
-		case MODE_DATE:
-			#ifdef DebugMode
-			Serial.println("PCP to Time");
-			#endif
-			NewClockState = MODE_TIME;
-			break;
-
-		default:
-			#ifdef DebugMode
-			Serial.println("Error while switching, current state: " + String(ClockState));
-			#endif
-			break;
-		}
-		ClockState = MODE_PCP;
-	}
-	if (((curMillis - lastMillisUpdatedESP) > ESPUpdateInterval || (curMillis - lastMillisUpdatedESP) < 0) && !MaxTriesHit)
-	{
-		lastMillisUpdatedESP = curMillis;
-		if (!ConnectedESP)
-		{
-			CurrentProcessingCommand = IS_ESP_CONNECTED;
-		}
-		else if (!DateUpdated)
-		{
-			CurrentProcessingCommand = GET_DATE;
-		}
-		else if (!TimeUpdated) 
-		{
-			CurrentProcessingCommand = GET_TIME;
-		}
-		else
-		{
-			CurrentProcessingCommand = IS_DATA_UPDATE_AVAIABLE;
-		}
-		#ifdef DebugMode
-		Serial.println("Checking if the ESP has an update available");
-		#endif
-		CurrentClockState = ClockState;
-		ClockState = MODE_UPDATE_ESPDATA;
-	}
+	RunModeUpdate(millis());
 }
