@@ -1,10 +1,18 @@
-#include "Settings.h"
 #include "TimeClient.h"
 
 #include <Time.h>
 #include <TimeLib.h>
 #include <RTClock.h>
 
+int timeVar[6];
+int dateVar[6];
+int cathodeVar[6];
+
+bool DateUpdated;
+bool TimeUpdated;
+bool RTCUpdated;
+String currentDateESP;
+String currentTimeESP;
 
 const char* delim = " :";
 char s[128];   // for sprintf

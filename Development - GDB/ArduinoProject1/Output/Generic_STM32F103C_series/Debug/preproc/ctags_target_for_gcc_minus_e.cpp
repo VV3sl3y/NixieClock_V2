@@ -123,11 +123,11 @@ TODO Lijst:
 
 
 
-	- Voor de powerdown van de nixies in de Drivenixies funties aanmaken, dit omvat dan de powerup en powerdown voor de nixies
+	- Voor de powerdown van de nixies in de Drivenixies funties aanmaken, dit omvat dan de powerup en powerdown voor de nixies, eventueel met settime
 
 
 
-	- FastLED, implementeer animaties in LEDS
+	- FastLED, implementeer animaties in LEDS (Static, Breathing, RGB, knight rider)
 
 
 
@@ -160,5 +160,35 @@ TODO Lijst:
 
 
 	- voor speedup de digitalreadwrite omzetten naar DigitalReadWriteFast voor definitieve versie software de digitalreadwrite omzetten naar portmodulatie
+
+	
+
+	- EEPROM Implementatie: initialisatie(first upload eerste boot/full reset: parsebuildtimestamp()) & afhandeling
+
+	
+
+	
+
+Nixieclock Hardware:
+
+	- Stroom nameten, zoeken naar polyfuse(300-500mA?)
+
+	
+
+	- Behuizing tekenen
+
+
+
+NixieESP software:
+
+	  - flag zetten wanneer er een update van de settings is geweest (onderscheid maken tussen welke settings zijn veranderd?)
+
+	  
+
+	  - Webpage voor instellingen aanvullen in esp (rgb leds, off time, alle huidige settings defines in stm)
+
+	  
+
+	  - WifiManager webhost mode als er geen wifi is
 
 */

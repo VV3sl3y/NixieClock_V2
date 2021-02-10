@@ -116,5 +116,5 @@ void loop() {
 		break;
 	}
   
-	RunModeUpdate(millis());
+	RunModeUpdate();
 }

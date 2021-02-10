@@ -13,10 +13,10 @@ const String GET_TIME = "GetTime";
 const String IS_DATA_UPDATE_AVAIABLE = "GetUpdateAvailable";
 const String NO_DATA_RETURNED = "NoDataAvailable";
 
-bool ConnectedESP;
-bool MaxTriesHit;
-String CurrentProcessingCommand;
-int NumberOfConnectionTries;
+extern bool ConnectedESP;
+extern bool MaxTriesHit;
+extern String CurrentProcessingCommand;
+extern int NumberOfConnectionTries;
 
 bool initESP();
 bool sendDataESP(String);

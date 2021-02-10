@@ -11,6 +11,22 @@
 #include <Time.h>
 #include <TimeLib.h>
 
+long lastMillisCheckedRTC;
+long lastMillisPCP;
+long lastMillisSwitchMode;
+long lastMillisConnectionESP;
+long lastMillisUpdatedESP;
+long curMillis;
+
+int cycleCurrent;
+int FadeInNewMode;
+
+CLOCK_MODE ClockState;
+CLOCK_MODE NewClockState;
+CLOCK_MODE CurrentClockState;
+
+ESP_Mode ESP_State;
+
 bool initRunmodes()
 {
 	lastMillisCheckedRTC = 0;
@@ -285,6 +301,7 @@ void RunUpdateESPMode()
 
 void RunModeUpdate()
 {
+	curMillis = millis();
 	if ((curMillis - lastMillisSwitchMode) > SwitchDateTimeInterval || (curMillis - lastMillisSwitchMode) < 0)
 	{
 		lastMillisSwitchMode = curMillis;

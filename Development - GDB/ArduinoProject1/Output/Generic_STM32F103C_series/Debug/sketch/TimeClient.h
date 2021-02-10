@@ -3,15 +3,15 @@
 #include <Arduino.h>
 #include "Settings.h"
 
-int timeVar[6];
-int dateVar[6];
-int cathodeVar[6];
-
-bool DateUpdated;
-bool TimeUpdated;
-bool RTCUpdated;
-String currentDateESP;
-String currentTimeESP;
+extern int timeVar[6];
+extern int dateVar[6];
+extern int cathodeVar[6];
+ 
+extern bool DateUpdated;
+extern bool TimeUpdated;
+extern bool RTCUpdated;
+extern String currentDateESP;
+extern String currentTimeESP;
 
 #pragma region RTCFunctionality
 bool initTimeClient();

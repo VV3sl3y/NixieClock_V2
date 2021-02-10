@@ -1,15 +1,5 @@
 #pragma once
 
-long lastMillisCheckedRTC;
-long lastMillisPCP;
-long lastMillisSwitchMode;
-long lastMillisConnectionESP;
-long lastMillisUpdatedESP;
-long curMillis;
-
-int cycleCurrent;
-int FadeInNewMode;
-
 enum CLOCK_MODE
 {
 	MODE_DEBUG,
@@ -21,9 +11,9 @@ enum CLOCK_MODE
 	MODE_ERROR
 };
 
-CLOCK_MODE ClockState;
-CLOCK_MODE NewClockState;
-CLOCK_MODE CurrentClockState;
+extern CLOCK_MODE ClockState;
+extern CLOCK_MODE NewClockState;
+extern CLOCK_MODE CurrentClockState;
 
 enum ESP_Mode
 {
@@ -32,7 +22,7 @@ enum ESP_Mode
 	ESP_COMMAND_REDO
 };
 
-ESP_Mode ESP_State;
+extern ESP_Mode ESP_State;
 
 bool initRunmodes();
 void RunDebugMode();
@@ -40,5 +30,5 @@ void RunTimeMode();
 void RunDateMode();
 void RunPreventionCathodePoisoning(CLOCK_MODE);
 void RunUpdateESPMode();
-void RunModeUpdate(long);
+void RunModeUpdate();
 void RunErrorMode();
