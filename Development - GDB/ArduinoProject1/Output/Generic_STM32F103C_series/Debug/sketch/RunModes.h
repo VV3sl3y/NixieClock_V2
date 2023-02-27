@@ -30,5 +30,6 @@ void RunTimeMode();
 void RunDateMode();
 void RunPreventionCathodePoisoning(CLOCK_MODE);
 void RunUpdateESPMode();
+void RunLightingUpdate();
 void RunModeUpdate();
 void RunErrorMode();

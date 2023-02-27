@@ -24,7 +24,7 @@ uint8_t dateread[11];
 
 //-----------------------------------------------------------------------------
 const char * weekdays[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
-const char * months[] = {"Dummy", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+const char * months[] = {"null", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 //-----------------------------------------------------------------------------
 uint8_t str2month(const char * d)
 {
@@ -35,7 +35,7 @@ uint8_t str2month(const char * d)
 
 
 //-----------------------------------------------------------------------------
-void ParseBuildTimestamp(tm_t & mt)
+void ParseBuildTimestamp(tm_t &mt)
 {
 	// Timestamp format: "Dec  8 2017, 22:57:54"
 	sprintf(s, "Timestamp: %s, %s\n", __DATE__, __TIME__);

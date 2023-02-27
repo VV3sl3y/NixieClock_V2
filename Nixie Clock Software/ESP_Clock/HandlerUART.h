@@ -1,0 +1,3 @@
+
+bool InitHandlerUART();
+void HandleIncomingRequests();

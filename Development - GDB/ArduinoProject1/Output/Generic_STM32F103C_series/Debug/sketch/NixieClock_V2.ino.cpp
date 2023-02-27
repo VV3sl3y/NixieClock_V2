@@ -46,7 +46,15 @@
 
 /*
 TODO Lijst:
-	fix de code van multiple definitions
+fix de code van multiple definitions
+  Alle definitions aanmaken als extern (in Header file waar het logisch is), vervolgens globaal in de bijbehorende cpp aanmaken als normale variabele
+  vervolgens kan deze waarde probleemloos gebruikt worden in andere files :)
+  https://stackoverflow.com/questions/1433204/how-do-i-use-extern-to-share-variables-between-source-files/1433387
+
+- drie potentielen nakijken waarbij groot deel mogelijk herschreven moet worden
+  - RTOS https://electronics.stackexchange.com/questions/346031/do-microcontrollers-support-threading
+  - Port manipulation ipv seperate digitalwrites
+  - Tasmota integratie op ESP
 
 	------------------------------------------------------------------------------------------------------------------------------------------------------
 	- Flickering van eerste cijfer nakijken
@@ -83,20 +91,20 @@ TODO Lijst:
 	- ESP baud speed hoger proberen dan dat deze nu staat
 
 	- voor speedup de digitalreadwrite omzetten naar DigitalReadWriteFast voor definitieve versie software de digitalreadwrite omzetten naar portmodulatie
-	
+
 	- EEPROM Implementatie: initialisatie(first upload eerste boot/full reset: parsebuildtimestamp()) & afhandeling
-	
-	
+
+
 Nixieclock Hardware:
 	- Stroom nameten, zoeken naar polyfuse(300-500mA?)
-	
+
 	- Behuizing tekenen
 
 NixieESP software:
 	  - flag zetten wanneer er een update van de settings is geweest (onderscheid maken tussen welke settings zijn veranderd?)
-	  
+
 	  - Webpage voor instellingen aanvullen in esp (rgb leds, off time, alle huidige settings defines in stm)
-	  
+
 	  - WifiManager webhost mode als er geen wifi is
 */
 

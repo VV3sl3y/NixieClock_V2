@@ -21,16 +21,6 @@
   },
   {
     "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\ESPHandler.cpp",
-    "Include": "EEPROM.h",
-    "Includepath": "C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages\\stm32duino\\hardware\\STM32F1\\2020.12.14\\libraries\\EEPROM"
-  },
-  {
-    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\ESPHandler.cpp",
-    "Include": "SoftSerialSTM32.h",
-    "Includepath": "C:\\Users\\Moh\\Documents\\Arduino\\Libraries\\SoftwareSerialSTM32"
-  },
-  {
-    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\ESPHandler.cpp",
     "Include": "",
     "Includepath": null
   },
@@ -65,27 +55,22 @@
     "Includepath": null
   },
   {
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\Settings.cpp",
+    "Include": "EEPROM.h",
+    "Includepath": "C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages\\stm32duino\\hardware\\STM32F1\\2020.12.14\\libraries\\EEPROM"
+  },
+  {
+    "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\Settings.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
     "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\TimeClient.cpp",
     "Include": "RTClock.h",
     "Includepath": "C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages\\stm32duino\\hardware\\STM32F1\\2020.12.14\\libraries\\RTClock\\src"
   },
   {
     "Sourcefile": "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\Output\\Generic_STM32F103C_series\\Debug\\sketch\\TimeClient.cpp",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages\\stm32duino\\hardware\\STM32F1\\2020.12.14\\libraries\\EEPROM\\EEPROM.cpp",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages\\stm32duino\\hardware\\STM32F1\\2020.12.14\\libraries\\EEPROM\\flash_stm32.c",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "C:\\Users\\Moh\\Documents\\Arduino\\Libraries\\SoftwareSerialSTM32\\SoftSerialSTM32.cpp",
     "Include": "",
     "Includepath": null
   },
@@ -141,6 +126,16 @@
   },
   {
     "Sourcefile": "C:\\Users\\Moh\\Documents\\Arduino\\Libraries\\Time\\Time.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages\\stm32duino\\hardware\\STM32F1\\2020.12.14\\libraries\\EEPROM\\EEPROM.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Moh\\AppData\\Local\\Arduino15\\packages\\stm32duino\\hardware\\STM32F1\\2020.12.14\\libraries\\EEPROM\\flash_stm32.c",
     "Include": "",
     "Includepath": null
   },

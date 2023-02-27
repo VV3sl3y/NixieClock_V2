@@ -16,6 +16,8 @@ long lastMillisPCP;
 long lastMillisSwitchMode;
 long lastMillisConnectionESP;
 long lastMillisUpdatedESP;
+long lastMillisLightingUpdate;
+long lastMillisTimeUpdateChecked;
 long curMillis;
 
 int cycleCurrent;
@@ -24,6 +26,8 @@ int FadeInNewMode;
 CLOCK_MODE ClockState;
 CLOCK_MODE NewClockState;
 CLOCK_MODE CurrentClockState;
+
+NeoAnimations LightingAnimation;
 
 ESP_Mode ESP_State;
 
@@ -34,6 +38,8 @@ bool initRunmodes()
 	lastMillisSwitchMode = 0;
 	lastMillisConnectionESP = 0;
 	lastMillisUpdatedESP = 0;
+	lastMillisLightingUpdate = 0;
+	lastMillisTimeUpdateChecked = 0;
 	curMillis = 0;
 	
 	cycleCurrent = 0;
@@ -43,12 +49,15 @@ bool initRunmodes()
 	NewClockState = MODE_TIME;
 	CurrentClockState = MODE_TIME;
 	
+	LightingAnimation = Static;
+	
 	ESP_State = ESP_FREE;
+	
+	digitalWrite(HVON, HIGH);
 	return true;
 }
 
 void RunDebugMode() {
-	digitalWrite(HVON, HIGH);
 	for (int x = 0; x < NumberOfNixies; x++)
 	{
 		NixiesOff();
@@ -75,7 +84,8 @@ void RunTimeMode() {
 		lastMillisCheckedRTC = curMillis;
 
 		#ifdef DebugMode
-		Serial.println("curmillis:" + String(curMillis) + "   oldMillisTimeCheckedRTC:" + String(lastMillisCheckedRTC));
+		if (DebugMode > 2)
+				Serial.println("curmillis:" + String(curMillis) + "   oldMillisTimeCheckedRTC:" + String(lastMillisCheckedRTC));
 		#endif
 
 		if ((timeVar[0] % 2) == 1)
@@ -88,9 +98,9 @@ void RunTimeMode() {
 		}
 	}
 
-	digitalWrite(HVON, HIGH);
 	for (int x = 0; x < NumberOfNixies; x++)
 	{
+#pragma warning DelayMicros eruit werken
 		NixiesOff();
 		delayMicroseconds(NIXIE_OFF_TIME);
 		SetNixieDriverVal(timeVar[x]);
@@ -108,13 +118,14 @@ void RunDateMode() {
 
 		lastMillisCheckedRTC = curMillis;
 		#ifdef DebugMode
-		Serial.println("curmillis:" + String(curMillis) + "   oldMillisDateRTC:" + String(lastMillisCheckedRTC));
+		if (DebugMode > 2)
+			Serial.println("curmillis:" + String(curMillis) + "   oldMillisDateRTC:" + String(lastMillisCheckedRTC));
 		#endif
 	}
 
-	digitalWrite(HVON, HIGH);
 	for (int x = 0; x < NumberOfNixies; x++)
 	{
+#pragma warning DelayMicros eruit werken
 		NixiesOff();
 		delayMicroseconds(NIXIE_OFF_TIME);
 		SetNixieDriverVal(dateVar[x]);
@@ -189,7 +200,8 @@ void RunPreventionCathodePoisoning(CLOCK_MODE NewState) {
 			
 		default:
 			#ifdef DebugMode
-			Serial.println("Error while animating, set animation: " + AnimationPCP);
+			if (DebugMode > 0)
+					Serial.println("Error while animating, set animation: " + AnimationPCP);
 			#endif
 			break;
 		}
@@ -204,20 +216,22 @@ void RunPreventionCathodePoisoning(CLOCK_MODE NewState) {
 		else
 		{
 			#ifdef DebugMode
-			Serial.println("entering new afterpcp state: " + String(ClockState));
+			if (DebugMode > 0)
+				Serial.println("entering new afterpcp state: " + String(ClockState));
 			#endif
 			cycleCurrent = 0;
 			FadeInNewMode = 0;
 			ClockState = NewClockState;
 		}
 			#ifdef DebugMode
-			Serial.println("curmillis:" + String(curMillis) + "   oldMillisPCP:" + String(lastMillisPCP));
+			if (DebugMode > 2)
+				Serial.println("curmillis:" + String(curMillis) + "   oldMillisPCP:" + String(lastMillisPCP));
 			#endif
 	}
   
-	digitalWrite(HVON, HIGH);
 	for (int x = 0; x < NumberOfNixies; x++)
 	{
+#pragma warning DelayMicros eruit werken
 		NixiesOff();
 		delayMicroseconds(NIXIE_OFF_TIME);
 		SetNixieDriverVal(cathodeVar[x]);
@@ -299,30 +313,41 @@ void RunUpdateESPMode()
 	ClockState = CurrentClockState;
 }
 
+void RunLightingUpdate()
+{
+#pragma message "RunLightingUpdate is not yet implemented"
+	
+	setNeoBrightness(BRIGHTNESS);
+	setNeoColor(LED_COLOR_R, LED_COLOR_G, LED_COLOR_B);
+}
+
 void RunModeUpdate()
 {
-	curMillis = millis();
-	if ((curMillis - lastMillisSwitchMode) > SwitchDateTimeInterval || (curMillis - lastMillisSwitchMode) < 0)
+	curMillis = millis();	
+	if ((ClockState == MODE_TIME && (curMillis - lastMillisSwitchMode) > AmountOfTimeToDisplayTime) || (ClockState == MODE_DATE && (curMillis - lastMillisSwitchMode) > AmountOfTimeToDisplayDate) || (curMillis - lastMillisSwitchMode) < 0)
 	{
 		lastMillisSwitchMode = curMillis;
 		switch (ClockState) {
 		case MODE_TIME:
 			#ifdef DebugMode
-			Serial.println("PCP to Date");
+			if (DebugMode > 1)
+				Serial.println("PCP to Date");
 			#endif
 			NewClockState = MODE_DATE;
 			break;
 
 		case MODE_DATE:
 			#ifdef DebugMode
-			Serial.println("PCP to Time");
+			if (DebugMode > 1)
+				Serial.println("PCP to Time");
 			#endif
 			NewClockState = MODE_TIME;
 			break;
 
 		default:
 			#ifdef DebugMode
-			Serial.println("Error while switching, current state: " + String(ClockState));
+			if (DebugMode > 0)
+				Serial.println("Error while switching, current state: " + String(ClockState));
 			#endif
 			break;
 		}
@@ -338,23 +363,32 @@ void RunModeUpdate()
 		else if (!DateUpdated)
 		{
 			CurrentProcessingCommand = GET_DATE;
+			lastMillisTimeUpdateChecked = millis();
 		}
 		else if (!TimeUpdated) 
 		{
 			CurrentProcessingCommand = GET_TIME;
+			lastMillisTimeUpdateChecked = millis();
 		}
 		else
 		{
 			CurrentProcessingCommand = IS_DATA_UPDATE_AVAIABLE;
 		}
 		#ifdef DebugMode
-		Serial.println("Checking if the ESP has an update available");
+		if (DebugMode > 0)
+			Serial.println("Checking if the ESP has an update available");
 		#endif
 		CurrentClockState = ClockState;
 		ClockState = MODE_UPDATE_ESPDATA;
 	}
+	if ((curMillis - lastMillisTimeUpdateChecked) > DateTimeUpdateInterval)
+	{
+		TimeUpdated = false;
+		DateUpdated = false;
+		lastMillisTimeUpdateChecked = millis();
+	}
 }
 
 void RunErrorMode() {
-
+	digitalWrite(HVON, LOW);
 }

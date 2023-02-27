@@ -13,71 +13,94 @@ void setup() {
 	//Free up PB3 & PB4
 	afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);
   
+	#pragma region Initialisation
 	//Start Serial communication
 	#ifdef DebugMode
 	Serial.begin(DebugBAUDRate);
 	#endif
-	
-	#pragma region InitClasses
-	if (initRunmodes()) 
+	if (InitializeSettings())
 	{
 		#ifdef DebugMode
-		Serial.println("Runmodes initialized");
+		if (DebugMode > 0)
+			Serial.println("Settings initialized");
 		#endif
 	} 
 	else 
 	{
 		#ifdef DebugMode
-		Serial.println("Failed to initialize Runmodes");
+		if (DebugMode > 0)
+			Serial.println("Failed to initialize Settings");
+		#endif
+	}
+	
+	if (initRunmodes()) 
+	{
+		#ifdef DebugMode
+		if (DebugMode > 0)
+			Serial.println("Runmodes initialized");
+		#endif
+	} 
+	else 
+	{
+		#ifdef DebugMode
+		if (DebugMode > 0)
+			Serial.println("Failed to initialize Runmodes");
 		#endif
 	}
 	
 	//set pinmodes
 	if(initPins()) {
 		#ifdef DebugMode
-		Serial.println("Pins initialized");
+		if (DebugMode > 0)
+			Serial.println("Pins initialized");
 		#endif
 	} else {
 		#ifdef DebugMode
-		Serial.println("Failed to initialize pins");
+		if (DebugMode > 0)
+			Serial.println("Failed to initialize pins");
 		#endif
 	}
 
 	//initialize RTC
 	if(initTimeClient()) {
 		#ifdef DebugMode
-		Serial.println("RTC initialized");
+		if (DebugMode > 0)
+			Serial.println("TimeClient initialized");
 		#endif
 	} else {
 		#ifdef DebugMode
-		Serial.println("Failed to initialize RTC");
+		if (DebugMode > 0)
+			Serial.println("Failed to initialize TimeClient");
 		#endif
 	}
 
 	//initialize WS2811B
-	if(initLEDS()) {
-		setNeoColor(LED_COLOR_R, LED_COLOR_G, LED_COLOR_B);
-		setNeoBrightness(BRIGHTNESS);
+	if(initLEDS()) {	// re-write needed to go from dumb color writing to support animations etc, functionality is in Runmodes.cpp under RunLightingUpdate()
 		#ifdef DebugMode
-		Serial.println("FastLED initialized");
+		if (DebugMode > 0)
+			Serial.println("FastLED initialized");
+    RunLightingUpdate();
 		#endif
 	} else {
 		#ifdef DebugMode
-		Serial.println("Failed to initialize FastLED");
+		if (DebugMode > 0)
+			Serial.println("Failed to initialize FastLED");
 		#endif
 	}
 
 	//initialize ESP
    if(initESP()) {
 		#ifdef DebugMode
-		Serial.println("ESP connected");
+	   if (DebugMode > 0)
+		   Serial.println("ESP connected");
 		#endif
 	} else {
 		#ifdef DebugMode
-		Serial.println("ESP connection failed");
+		if (DebugMode > 0)
+			Serial.println("ESP connection failed");
 		#endif
 	}
-	#pragma endregion
+#pragma endregion
 }
 
 //--------------Main Program Loop()--------------//
@@ -116,5 +139,5 @@ void loop() {
 		break;
 	}
   
-	RunModeUpdate(millis());
+	RunModeUpdate();
 }

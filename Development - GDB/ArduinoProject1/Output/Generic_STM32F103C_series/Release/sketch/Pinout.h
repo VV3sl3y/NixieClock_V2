@@ -30,6 +30,14 @@ bool initPins();
 //#define RsvPA14 PA14 //placeholder
 //#define RsvPA15 PA15 //placeholder
 
+#define N_Hour2_ADDR (1 << 0)
+#define N_Hour1_ADDR (1 << 1)
+#define N_Minute2_ADDR (1 << 2)
+#define N_Minute1_ADDR (1 << 3)
+#define N_Second2_ADDR (1 << 4)
+#define N_Second1_ADDR (1 << 5)
+#define N_Dot_ADDR (1 << 8)
+
 #define N_Hour2 PB0 //Nixie Hour 2 (first)
 #define N_Hour1 PB1 //Nixie Hour 1 (second)
 #define N_Minute2 PB2 //Nixie Minute 2 (third)
@@ -38,12 +46,17 @@ bool initPins();
 #define N_Second1 PB5 //Nixie Second 1 (sixth)
 #define N_Dot PB8 //Nixie Dots
 
+#define N_Driver_A_ADDR (1 << 15)
+#define N_Driver_B_ADDR (1 << 13)
+#define N_Driver_C_ADDR (1 << 12)
+#define N_Driver_D_ADDR (1 << 14)
+	
 #define N_Driver_C PB12 //Nixie Driver C signal
 #define N_Driver_B PB13 //Nixie Driver B signal
 #define N_Driver_D PB14 //Nixie Driver D signal
 #define N_Driver_A PB15 //Nixie Driver A signal
 
-//note to self PCB V2.0 has false pinout of RX TX on the MCU
+//note to self PCB V2.0 has false pinout of RX TX on the MCU, fixed in V2.1
 #define RX_ESP PB6 //RX of the ESP (bluepill TX, SCL)
 #define TX_ESP PB7 //TX of the ESP (bluepill RX, SDA)
 

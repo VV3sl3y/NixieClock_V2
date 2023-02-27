@@ -1,15 +1,11 @@
-# 1 "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
+# 1 "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\sketches\\NixieClock_V2_1.ino"
 /*
 
 ----------------------------------------------------------------------------------------------------------
 
- * Software written for the NixieClock V2 and probably V2.1 will be included here too
+ * Software written for the NixieClock V2.1 Software version V1.0 [V2.1.1.0]
 
- * Development is mostly done on the V2 board
-
- * Exception to this rule will be the communication with the ESP as RX/TX will be connected differently
-
- * and have yet to be tested on the V2.1
+ * Development phased to Board V2.1 as the V2 is DEPRECATED
 
  *
 
@@ -20,7 +16,7 @@
 -----------------------------------------------------------------------------------------------------------
 
 */
-# 13 "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
+# 11 "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\sketches\\NixieClock_V2_1.ino"
 /*
 
 	Nieuwe indeling files:
@@ -80,85 +76,5 @@
 		alarm handling
 
 		verdere tijdafhandeling intern
-
-*/
-# 45 "P:\\GitHub\\NixieClock_V2\\Development - GDB\\ArduinoProject1\\sketches\\NixieClock_V2.ino"
-/*
-
-TODO Lijst:
-
-	fix de code van multiple definitions
-
-
-
-	------------------------------------------------------------------------------------------------------------------------------------------------------
-
-	- Flickering van eerste cijfer nakijken
-
-
-
-	- Commando's met ESP nakijken dat deze zonder flickering verloopt(nu stopt de multiplexer merkbaar)
-
-			eventuele oplossing zou kunnen zijn dat de NixiesOff eerst wordt uitgevoerd voordat de tijd weer wordt weergegeven
-
-			zo voorkomt het dat het eerste cijfer helderder oplicht (RunUpdateESPMode(), RunUpdateMode())
-
-
-
-	- Voor de tijdscheck bij opstarten :
-
-		bij setup, vraag parsebuildtimestamp aan
-
-		als huidige RTC tijd < parsebuildtimestamp : RTC tijd = parsebuildtimestamp ? RTC tijd = RTC tijd
-
-		Bij ESP tijd zelfde : RTC tijd < ESP tijd : RTC tijd = ESP tijd ? RTC tijd = RTC tijd
-
-		Originele RTCClock  code :
-
-		  ParseBuildTimestamp(mtt);   // get the Unix epoch Time counted from 00:00:00 1 Jan 1970
-
-		  tt = rtclock.makeTime(mtt) + 25;  // additional seconds to compensate build and upload delay
-
-		  rtclock.setTime(tt);
-
-
-
-	- Voor de powerdown van de nixies in de Drivenixies funties aanmaken, dit omvat dan de powerup en powerdown voor de nixies
-
-
-
-	- FastLED, implementeer animaties in LEDS
-
-
-
-	- De animatie van preventcathodepoisoning(PCP) smoothen om van klok stand naar datumstand te gaan gebruik de huidige notatie en stop de animatie wanneer het cijfer op de nieuwe staat
-
-
-
-	- schakel de dots mee (meteen aan het begin) can PCP
-
-
-
-	- Class aanmaken voor de afhandeling van het alarm, of bijvoegen in de RTC
-
-
-
-	- Implementeer afvangen beschikbare data ESP(aanvraag data beschikbaar ??) voornamelijk in de ESP
-
-
-
-	- Maak een update available voor esp vs stm
-
-
-
-	- Voor de ESP commando's(aanpassen settings), vlag toevoegen welke bijhoud of er een commando bezig is om de tijdsweergave zo min mogelijk te beinvloeden
-
-
-
-	- ESP baud speed hoger proberen dan dat deze nu staat
-
-
-
-	- voor speedup de digitalreadwrite omzetten naar DigitalReadWriteFast voor definitieve versie software de digitalreadwrite omzetten naar portmodulatie
 
 */

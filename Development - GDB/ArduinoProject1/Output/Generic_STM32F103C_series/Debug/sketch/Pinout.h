@@ -38,12 +38,17 @@ bool initPins();
 #define N_Second1 PB5 //Nixie Second 1 (sixth)
 #define N_Dot PB8 //Nixie Dots
 
+#define N_Driver_A_ADDR (1 << 15)
+#define N_Driver_B_ADDR (1 << 13)
+#define N_Driver_C_ADDR (1 << 12)
+#define N_Driver_D_ADDR (1 << 14)
+	
 #define N_Driver_C PB12 //Nixie Driver C signal
 #define N_Driver_B PB13 //Nixie Driver B signal
 #define N_Driver_D PB14 //Nixie Driver D signal
 #define N_Driver_A PB15 //Nixie Driver A signal
 
-//note to self PCB V2.0 has false pinout of RX TX on the MCU
+//note to self PCB V2.0 has false pinout of RX TX on the MCU, fixed in V2.1
 #define RX_ESP PB6 //RX of the ESP (bluepill TX, SCL)
 #define TX_ESP PB7 //TX of the ESP (bluepill RX, SDA)
 

@@ -1,4 +1,6 @@
 #include "Settings.h"
+#include "HandlerUART.h"
+#include "WiFiConnect.h"
 
 //declairing prototypes
 void configModeCallback (WiFiManager *myWiFiManager);
@@ -49,7 +51,7 @@ String COLOR_THEMES = "<option>red</option>"
 
 void setup() {
     // put your setup code here, to run once:
-    Serial.begin(57600);
+    Serial.begin(115200); //max proberen 2000000
 
     //begin file handler
     SPIFFS.begin();
@@ -135,41 +137,6 @@ void setup() {
 }
 
 void loop() {
-    if (Serial.available() > 0)
-    {
-      digitalWrite(LED_BUILTIN, HIGH);
-      String command = Serial.readStringUntil(';');
-      Serial.flush();
-      delay(10);
-      if(command == "isConnectedESP")
-      {
-        Serial.print("ESPConnected;");
-      }
-      else if(command == "GetTime")
-      {
-        String currentTime = timeClient.getFormattedTime();
-        Serial.print(currentTime + ";");
-      }
-      else if(command == "GetDate")
-      {
-        String currentDate = timeClient.getFormattedDate();
-        Serial.print(currentDate + ";");
-      }
-      else if(command == "GetSignalStrength")
-      {
-        int8_t rssi = 95;
-        
-        Serial.print("Signal Strength (RSSI): ");
-        Serial.print(rssi);
-        Serial.print("%;");
-      }
-      else
-      {
-        Serial.print(command + ";");
-      }
-    }
-    digitalWrite(LED_BUILTIN, LOW);
-
     if (WEBSERVER_ENABLED)
     {
       server.handleClient();

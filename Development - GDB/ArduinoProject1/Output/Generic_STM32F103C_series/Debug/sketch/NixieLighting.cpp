@@ -4,6 +4,7 @@
 #include "Settings.h"
 #include "Pinout.h"
 
+//#include "./FastLED/FastLED.h"
 #include <FastLED.h>
 
 CRGB leds[NUM_LEDS];
@@ -26,11 +27,4 @@ void setNeoColor(uint32_t r, uint32_t g, uint32_t b)
 void setNeoBrightness(uint32 brightness)
 {
 	FastLED.setBrightness(brightness);
-}
-
-void testFastLED() {
-	for (int i = 0; i < NUM_LEDS; i++) {
-		leds[i] = CRGB::White;
-	}
-	FastLED.show();
 }
