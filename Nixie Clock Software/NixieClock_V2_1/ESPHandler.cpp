@@ -7,8 +7,6 @@ bool MaxTriesHit;
 String CurrentProcessingCommand;
 int NumberOfConnectionTries;
 
-//SoftSerialSTM32 SWcSerialESP(RX_ESP, TX_ESP); //mcuTX, mcuRX
-
 bool initESP()
 {
 	ConnectedESP = false;
@@ -31,9 +29,10 @@ bool sendDataESP(String command)
 {
 	#ifdef DebugMode
 	if(DebugMode > 0)
-		Serial.println("now executing sendDataESP() " + command);
+		Serial.println("now executing sendDataESP(" + command + ")");
 	#endif
 	Serial2.print(command + ';');
+
 	return true;
 }
 
@@ -44,6 +43,7 @@ String receiveDataESP()
 		Serial.println("now executing receiveDataESP() ");
 	#endif
 	String tmpMessage = "";
+	
 	if (Serial2.available() > 0)
 	{
 		tmpMessage = Serial2.readStringUntil(';');

@@ -51,7 +51,7 @@ String COLOR_THEMES = "<option>red</option>"
 
 void setup() {
     // put your setup code here, to run once:
-    Serial.begin(115200); //max proberen 2000000
+    Serial.begin(2000000); //max proberen 2000000
 
     //begin file handler
     SPIFFS.begin();

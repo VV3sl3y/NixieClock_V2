@@ -31,6 +31,8 @@ int ESP_ReadTimeOut;
 int Max_ESPConnection_Retries;
 int	Max_ESPCommand_Retries;
 
+HEADER_BOARD UsedHeaderBoard;
+
 bool InitializeSettings()
 {
 	if (1) //ToDo: Check for EEPROM if settings are there, load defaults or EEPROM
@@ -51,8 +53,8 @@ bool InitializeSettings()
 		DateTimeUpdateInterval		=	3600000;	//interval to reset the TimeUpdated & DateUpdated
 		
 		//Tweakable settings for on/off time for each nixie for refresh vs brightness & eliminate ghosting
-		NIXIE_OFF_TIME	=	100;
-		NIXIE_ON_TIME	=	900;
+		NIXIE_OFF_TIME	=	50;		// org: 100
+		NIXIE_ON_TIME	=	450;	// org: 900
 
 		/**********************************************************************************
 			AnimationPCP: animation between time <-> date switching to save the cathode
@@ -66,13 +68,15 @@ bool InitializeSettings()
 		PCP_INTERVAL	=	50; //interval between switching numbers
 		
 		//ESP Settings
-		ESP_BAUDRate = 115200;
+		ESP_BAUDRate = 2000000;
 		ESP_ReadTimeOut = 5;
 		Max_ESPConnection_Retries = 5;
 		Max_ESPCommand_Retries = 3;
 		
+		
+		
 	
-		HEADER_BOARD UsedHeaderBoard = IN12;
+		UsedHeaderBoard = IN12;
 	}
 	else
 	{

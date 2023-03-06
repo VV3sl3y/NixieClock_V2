@@ -2,14 +2,10 @@
 #include "Settings.h"
 #include "Pinout.h"
 
-//#include "SoftSerialSTM32.h"
-
 bool ConnectedESP;
 bool MaxTriesHit;
 String CurrentProcessingCommand;
 int NumberOfConnectionTries;
-
-//SoftSerialSTM32 SWcSerialESP(RX_ESP, TX_ESP); //mcuTX, mcuRX
 
 bool initESP()
 {

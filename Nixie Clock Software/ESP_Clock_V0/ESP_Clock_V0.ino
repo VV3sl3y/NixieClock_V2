@@ -49,7 +49,7 @@ String COLOR_THEMES = "<option>red</option>"
 
 void setup() {
     // put your setup code here, to run once:
-    Serial.begin(115200);
+    Serial.begin(2000000);
 
     //begin file handler
     SPIFFS.begin();

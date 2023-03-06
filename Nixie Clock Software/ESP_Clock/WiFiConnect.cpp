@@ -1,9 +1,8 @@
 #include "WiFiConnect.h"
 
-bool InitWiFiMngr()
+/*bool InitWiFiMngr()
 {
     WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP  
-  Serial.begin(115200);
   Serial.setDebugOutput(true);  
   delay(3000);
   Serial.println("\n Starting");
@@ -73,4 +72,4 @@ bool InitWiFiMngr()
     //if you get here you have connected to the WiFi    
     Serial.println("connected...yeey :)");
   }
-}
+}*/

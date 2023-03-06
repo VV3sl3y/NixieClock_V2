@@ -1,6 +1,6 @@
 
 
-bool initEEPROM()
+/*bool initEEPROM()
 {
     EEPROM.begin(512);
 }
@@ -45,4 +45,4 @@ void clearEEPROM() {
   pinMode(13, OUTPUT);
   digitalWrite(13, HIGH);
   EEPROM.end();
-}
+}*/

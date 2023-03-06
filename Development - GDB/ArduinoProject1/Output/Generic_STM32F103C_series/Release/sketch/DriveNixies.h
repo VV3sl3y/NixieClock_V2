@@ -22,3 +22,4 @@ void SetNixieTube(int);
 void testNixieTube(int);
 void NixiesOff();
 void SwitchDot(int);
+void SetNixiePowerState(bool);

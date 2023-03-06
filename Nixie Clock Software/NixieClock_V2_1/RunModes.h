@@ -2,6 +2,9 @@
 
 enum CLOCK_MODE
 {
+	MODE_STARTUP,
+	MODE_POWERDOWN,
+	MODE_IDLE,
 	MODE_DEBUG,
 	MODE_TIME,
 	MODE_DATE,
@@ -25,6 +28,8 @@ enum ESP_Mode
 extern ESP_Mode ESP_State;
 
 bool initRunmodes();
+void RunStartUp();
+void RunPowerDown();
 void RunDebugMode();
 void RunTimeMode();
 void RunDateMode();

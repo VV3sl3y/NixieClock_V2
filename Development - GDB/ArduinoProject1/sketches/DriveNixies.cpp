@@ -4,16 +4,14 @@
 #include "Pinout.h"
 #include "Settings.h"
 
-HEADER_BOARD UsedHeaderBoard;
-
 //in this function there are all possible pin combos defined, but in reality we'll only use 0 - 9
 void SetNixieDriverVal(int i)
 {
-  
 	int portValue = 0;
+#pragma region BCD conversion
 	switch (UsedHeaderBoard)
 	{
-#pragma region IN12 PORTB values
+	#pragma region IN12 PORTB values
 	case IN12:
 		switch (i)
 		{
@@ -21,31 +19,31 @@ void SetNixieDriverVal(int i)
 			portValue = 0;
 			break;
 		case 1:
-			portValue = (N_Driver_A_ADDR | N_Driver_D_ADDR);
+			portValue = (N_Driver_A_ADDR);
 			break;
 		case 2:
-			portValue = (N_Driver_D_ADDR);
+			portValue = (N_Driver_B_ADDR);
 			break;
 		case 3:
-			portValue = (N_Driver_A_ADDR | N_Driver_B_ADDR | N_Driver_C_ADDR);
+			portValue = (N_Driver_A_ADDR | N_Driver_B_ADDR);
 			break;
 		case 4:
-			portValue = (N_Driver_B_ADDR | N_Driver_C_ADDR);
+			portValue = (N_Driver_C_ADDR);
 			break;
 		case 5:
 			portValue = (N_Driver_A_ADDR | N_Driver_C_ADDR);
 			break;
 		case 6:
-			portValue = (N_Driver_C_ADDR);
+			portValue = (N_Driver_B_ADDR | N_Driver_C_ADDR);
 			break;
 		case 7:
-			portValue = (N_Driver_A_ADDR | N_Driver_B_ADDR);
+			portValue = (N_Driver_A_ADDR | N_Driver_B_ADDR | N_Driver_C_ADDR);
 			break;
 		case 8:
-			portValue = (N_Driver_B_ADDR);
+			portValue = (N_Driver_D_ADDR);
 			break;
 		case 9:
-			portValue = (N_Driver_A_ADDR);
+			portValue = (N_Driver_A_ADDR | N_Driver_D_ADDR);
 			break;
 		case 10:
 			portValue = (N_Driver_B_ADDR | N_Driver_D_ADDR);
@@ -69,9 +67,10 @@ void SetNixieDriverVal(int i)
 			portValue = 0;
 			break;
 		}
-#pragma endregion
+		break;
+	#pragma endregion
     
-#pragma region IN14 PORTB values
+	#pragma region IN14 PORTB values
 	case IN14:
 		switch (i)
 		{
@@ -79,31 +78,31 @@ void SetNixieDriverVal(int i)
 			portValue = 0;
 			break;
 		case 1:
-			portValue = (N_Driver_A_ADDR);
+			portValue = (N_Driver_A_ADDR | N_Driver_D_ADDR);
 			break;
 		case 2:
-			portValue = (N_Driver_B_ADDR);
+			portValue = (N_Driver_D_ADDR);
 			break;
 		case 3:
-			portValue = (N_Driver_A_ADDR | N_Driver_B_ADDR);
+			portValue = (N_Driver_A_ADDR | N_Driver_B_ADDR | N_Driver_C_ADDR);
 			break;
 		case 4:
-			portValue = (N_Driver_C_ADDR);
+			portValue = (N_Driver_B_ADDR | N_Driver_C_ADDR);
 			break;
 		case 5:
 			portValue = (N_Driver_A_ADDR | N_Driver_C_ADDR);
 			break;
 		case 6:
-			portValue = (N_Driver_B_ADDR | N_Driver_C_ADDR);
+			portValue = (N_Driver_C_ADDR);
 			break;
 		case 7:
-			portValue = (N_Driver_A_ADDR | N_Driver_B_ADDR | N_Driver_C_ADDR);
+			portValue = (N_Driver_A_ADDR | N_Driver_B_ADDR);
 			break;
 		case 8:
-			portValue = (N_Driver_D_ADDR);
+			portValue = (N_Driver_B_ADDR);
 			break;
 		case 9:
-			portValue = (N_Driver_A_ADDR | N_Driver_D_ADDR);
+			portValue = (N_Driver_A_ADDR);
 			break;
 		case 10:
 			portValue = (N_Driver_B_ADDR | N_Driver_D_ADDR);
@@ -127,18 +126,24 @@ void SetNixieDriverVal(int i)
 			portValue = 0;
 			break;
 		}
-#pragma endregion
-
-		GPIOB_BASE->ODR &= 0b0000111111111111;  // clear previous values
-		GPIOB_BASE->ODR |= portValue;           // set new values
+		break;
+		
+	default:
+		portValue = 0;
 		break;
 	}
+	#pragma endregion
+
+#pragma endregion
+
+	GPIOB_BASE->ODR &= 0b0000111111111111;    // clear previous values
+	GPIOB_BASE->ODR |= portValue;             // set new values
 }
 
 void SetNixieTube(int n) {
 	switch (UsedHeaderBoard)
 	{
-#pragma region IN12 SB
+	#pragma region IN12 SB
 	case IN12:
 		switch (n) {
 		case HOURS_MSB:
@@ -163,9 +168,9 @@ void SetNixieTube(int n) {
 			break;
 		}
 		break;
-#pragma endregion
+	#pragma endregion
     
-#pragma region IN14 SB
+	#pragma region IN14 SB
 	case IN14:
 		switch (n) {
 		case HOURS_MSB:
@@ -190,7 +195,7 @@ void SetNixieTube(int n) {
 			break;
 		}
 		break;
-#pragma endregion
+	#pragma endregion
 	}
 }
 
@@ -217,5 +222,17 @@ void SwitchDot(int i) {
 		GPIOB_BASE->ODR &= ~(N_Dot_ADDR);
 		//digitalWrite(N_Dot, LOW);
 		break;
+	}
+}
+
+void SetNixiePowerState(bool PowerState)
+{
+	if (PowerState)
+	{
+		digitalWrite(HVON, HIGH);
+	}
+	else
+	{
+		digitalWrite(HVON, LOW);
 	}
 }

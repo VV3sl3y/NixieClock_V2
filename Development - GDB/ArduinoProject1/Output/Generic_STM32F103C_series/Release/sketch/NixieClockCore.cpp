@@ -110,6 +110,16 @@ void loop() {
   
 	switch (ClockState)
 	{
+	case MODE_STARTUP:
+		RunStartUp();
+		ClockState = MODE_TIME;
+		break;
+		
+	case MODE_POWERDOWN:
+		RunPowerDown();
+		ClockState = MODE_IDLE;
+		break;
+		
 	case MODE_DEBUG:
 		RunDebugMode();
 		ClockState = MODE_TIME;
@@ -130,7 +140,7 @@ void loop() {
 	case MODE_UPDATE_ESPDATA:
 		RunUpdateESPMode();
 		break;
-
+		
 	case MODE_ERROR:
 		RunErrorMode();
 		break;

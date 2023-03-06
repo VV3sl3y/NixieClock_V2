@@ -13,11 +13,11 @@ void setup() {
 	//Free up PB3 & PB4
 	afio_cfg_debug_ports(AFIO_DEBUG_SW_ONLY);
   
+	#pragma region Initialisation
 	//Start Serial communication
 	#ifdef DebugMode
 	Serial.begin(DebugBAUDRate);
 	#endif
-	
 	if (InitializeSettings())
 	{
 		#ifdef DebugMode
@@ -33,7 +33,6 @@ void setup() {
 		#endif
 	}
 	
-	#pragma region InitClasses
 	if (initRunmodes()) 
 	{
 		#ifdef DebugMode
@@ -76,8 +75,7 @@ void setup() {
 	}
 
 	//initialize WS2811B
-	if(initLEDS()) {
-#pragma message "re-write needed to go from dumb color writing to support animations etc, functionality is in Runmodes.cpp under RunLightingUpdate()"
+	if(initLEDS()) {	// re-write needed to go from dumb color writing to support animations etc, functionality is in Runmodes.cpp under RunLightingUpdate()
 		#ifdef DebugMode
 		if (DebugMode > 0)
 			Serial.println("FastLED initialized");
@@ -102,7 +100,7 @@ void setup() {
 			Serial.println("ESP connection failed");
 		#endif
 	}
-	#pragma endregion
+#pragma endregion
 }
 
 //--------------Main Program Loop()--------------//
@@ -112,6 +110,16 @@ void loop() {
   
 	switch (ClockState)
 	{
+	case MODE_STARTUP:
+		RunStartUp();
+		ClockState = MODE_TIME;
+		break;
+		
+	case MODE_POWERDOWN:
+		RunPowerDown();
+		ClockState = MODE_IDLE;
+		break;
+		
 	case MODE_DEBUG:
 		RunDebugMode();
 		ClockState = MODE_TIME;
@@ -132,7 +140,7 @@ void loop() {
 	case MODE_UPDATE_ESPDATA:
 		RunUpdateESPMode();
 		break;
-
+		
 	case MODE_ERROR:
 		RunErrorMode();
 		break;

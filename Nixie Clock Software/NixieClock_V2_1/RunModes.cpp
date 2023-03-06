@@ -45,18 +45,28 @@ bool initRunmodes()
 	cycleCurrent = 0;
 	FadeInNewMode = 0;
 	
-	ClockState = MODE_TIME;
+	ClockState = MODE_STARTUP;
 	NewClockState = MODE_TIME;
 	CurrentClockState = MODE_TIME;
 	
 	LightingAnimation = Static;
 	
 	ESP_State = ESP_FREE;
+	
 	return true;
 }
 
+void RunStartUp()
+{
+	SetNixiePowerState(true);
+}
+
+void RunPowerDown()
+{
+	SetNixiePowerState(false);
+}
+
 void RunDebugMode() {
-	digitalWrite(HVON, HIGH);
 	for (int x = 0; x < NumberOfNixies; x++)
 	{
 		NixiesOff();
@@ -97,7 +107,6 @@ void RunTimeMode() {
 		}
 	}
 
-	digitalWrite(HVON, HIGH);
 	for (int x = 0; x < NumberOfNixies; x++)
 	{
 		NixiesOff();
@@ -122,7 +131,6 @@ void RunDateMode() {
 		#endif
 	}
 
-	digitalWrite(HVON, HIGH);
 	for (int x = 0; x < NumberOfNixies; x++)
 	{
 		NixiesOff();
@@ -228,7 +236,6 @@ void RunPreventionCathodePoisoning(CLOCK_MODE NewState) {
 			#endif
 	}
   
-	digitalWrite(HVON, HIGH);
 	for (int x = 0; x < NumberOfNixies; x++)
 	{
 		NixiesOff();
@@ -323,7 +330,7 @@ void RunLightingUpdate()
 void RunModeUpdate()
 {
 	curMillis = millis();	
-	if ((ClockState == MODE_TIME && (curMillis - lastMillisSwitchMode) > AmountOfTimeToDisplayTime) || (ClockState == MODE_DATE && (curMillis - lastMillisSwitchMode) > AmountOfTimeToDisplayDate) || (curMillis - lastMillisSwitchMode) < 0)
+	if (((ClockState == MODE_TIME && (curMillis - lastMillisSwitchMode) > AmountOfTimeToDisplayTime) || (ClockState == MODE_DATE && (curMillis - lastMillisSwitchMode) > AmountOfTimeToDisplayDate) || (curMillis - lastMillisSwitchMode) < 0) && ClockState != MODE_IDLE)
 	{
 		lastMillisSwitchMode = curMillis;
 		switch (ClockState) {
@@ -348,6 +355,7 @@ void RunModeUpdate()
 			if (DebugMode > 0)
 				Serial.println("Error while switching, current state: " + String(ClockState));
 			#endif
+			NewClockState = MODE_ERROR;
 			break;
 		}
 		ClockState = MODE_PCP;
@@ -389,5 +397,17 @@ void RunModeUpdate()
 }
 
 void RunErrorMode() {
-
+#ifndef DebugMode
+#define DebugMode
+	Serial.begin(DebugBAUDRate);
+#endif // !DebugMode
+	SetNixiePowerState(false);
+	if (millis() % 5000 > 50)
+	{
+		Serial.println("Nixieclock currently in error mode");
+	}
+	if (millis() % 100 > 50)
+	{
+		digitalWrite(LED_RTC, !digitalRead(LED_RTC));
+	}
 }
